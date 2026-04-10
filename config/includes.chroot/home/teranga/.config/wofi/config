@@ -1,0 +1,22 @@
+# TérangaOS — Wofi Configuration
+
+width=600
+height=400
+show=drun
+prompt=Rechercher...
+filter_rate=100
+allow_images=true
+image_size=32
+exec_search=true
+halign=fill
+orientation=vertical
+content_halign=fill
+insensitive=true
+allow_markup=true
+no_actions=true
+matching= fuzzy
+normal_window=false
+hide_scroll=true
+parse_search=true
+screenshot=true
+term=kitty

@@ -1,0 +1,41 @@
+#!/bin/bash
+# =============================================================================
+# TérangaOS - Hook Utilisateurs
+# Codename: Djolof | Version: 1.0
+# =============================================================================
+
+set -e
+
+echo "[TERANGOS] Configuration utilisateurs..."
+
+# =============================================================================
+# Create teranga user
+# =============================================================================
+if ! id teranga &>/dev/null; then
+    echo "[TERANGOS] Création utilisateur teranga..."
+    useradd -m -s /bin/zsh -G sudo,audio,video,input,netdev,plugdev,wireshark,docker teranga
+    
+    # Default password: teranga
+    echo "teranga:teranga" | chpasswd
+else
+    echo "[TERANGOS] Utilisateur teranga déjà existant"
+fi
+
+# =============================================================================
+# Sudoers for teranga
+# =============================================================================
+cat > /etc/sudoers.d/teranga << 'EOF'
+teranga ALL=(ALL) NOPASSWD: ALL
+EOF
+chmod 0440 /etc/sudoers.d/teranga
+
+# =============================================================================
+# Groups for Wayland
+# =============================================================================
+usermod -aG audio teranga
+usermod -aG video teranga
+usermod -aG input teranga
+usermod -aG netdev teranga
+usermod -aG plugdev teranga
+
+echo "[TERANGOS] Utilisateurs configurés"

@@ -1,0 +1,81 @@
+# =============================================================================
+# TérangaOS - GRUB Theme Configuration
+# Codename: Djolof
+# =============================================================================
+
+# Theme title
+title-text: "TérangaOS 1.0 Djolof"
+title-font: "Sans Bold"
+title-color: "#FFBE00"
+
+# Menu appearance
++ boot_menu {
+    left = 35%
+    top = 50%
+    width = 30%
+    height = 40%
+    item_font = "Sans Regular 15"
+    item_color = "#F5EDD8"
+    selected_item_color = "#FFBE00"
+    item_height = 35
+    item_padding = 10
+    item_icon_space = 10
+    icon = "terminal"
+    selected_icon = "forward"
+
+    # Boot menu properties
+    border = 2 solid "#FFBE00"
+    border_color = "#C85200"
+    border_radius = 8
+    
+    # Scrollbar
+    scrollbar = true
+    scrollbar_width = 5
+    scrollbar_theme = "dark"
+}
+
+# Progress bar
++ progress_bar {
+    id = "__timeout__"
+    left = 10%
+    top = 90%
+    width = 80%
+    height = 8
+    border = 1 solid "#FFBE00"
+    border_color = "#C85200"
+    fill = "#C85200"
+    bg_color = "#1A1408"
+    highlight_overlay = 0%
+    overlay_color = "#FFBE00"
+    overlay_text = " "
+}
+
+# Terminal appearance
++ terminal_box {
+    left = 20%
+    top = 80%
+    width = 60%
+    height = 15
+    border = 1 solid "#FFBE00"
+    bg_color = "#0A0702"
+    border_color = "#C85200"
+}
+
+# Label style
+label {
+    id = "__timeout_label__"
+    font = "Sans Regular"
+    color = "#F5EDD8"
+}
+
+# Message style
+message_font = "Sans Regular 14"
+message_color = "#F5EDD8"
+
+# Component colors for selection
++ common {
+    selected = "#FFBE00"
+    failed = "#FF7A30"
+    hotkey = "#FFBE00"
+    hotkey_color = "#FFBE00"
+}

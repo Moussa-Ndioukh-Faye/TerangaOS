@@ -1,0 +1,38 @@
+#!/bin/bash
+# =============================================================================
+# TérangaOS - Hook Installation Ollama
+# Codename: Djolof | Version: 1.0
+# =============================================================================
+
+set -e
+
+echo "[TERANGOS] Installation Ollama..."
+
+# =============================================================================
+# Download and install Ollama
+# =============================================================================
+if ! command -v ollama &>/dev/null; then
+    echo "[TERANGOS] Téléchargement Ollama..."
+    
+    # Download Ollama binary
+    curl -fsSL https://ollama.ai/install.sh | sh
+    
+    echo "[OK] Ollama installé"
+else
+    echo "[OK] Ollama déjà installé"
+fi
+
+# =============================================================================
+# Pull default models
+# =============================================================================
+if command -v ollama &>/dev/null; then
+    echo "[TERANGOS] Téléchargement modèles IA..."
+    
+    # Download default models (optional)
+    ollama pull llama3 2>/dev/null || true
+    ollama pull mistral 2>/dev/null || true
+    
+    echo "[OK] Modèles IA téléchargés"
+fi
+
+echo "[TERANGOS] Ollama configuré"

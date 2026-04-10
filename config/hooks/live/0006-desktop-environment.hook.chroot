@@ -1,0 +1,54 @@
+#!/bin/bash
+# =============================================================================
+# TérangaOS - Hook Configuration Desktop Environment
+# Codename: Djolof | Version: 1.0
+# =============================================================================
+
+set -e
+
+echo "[TERANGOS] Configuration Desktop Environment..."
+
+# =============================================================================
+# SDDM Configuration
+# =============================================================================
+echo "[TERANGOS] Configuration SDDM..."
+systemctl enable sddm 2>/dev/null || true
+systemctl set-default graphical.target 2>/dev/null || true
+
+# =============================================================================
+# Network Manager
+# =============================================================================
+echo "[TERANGOS] Configuration NetworkManager..."
+systemctl enable NetworkManager 2>/dev/null || true
+
+# =============================================================================
+# PipeWire
+# =============================================================================
+echo "[TERANGOS] Configuration PipeWire..."
+systemctl --user enable pipewire 2>/dev/null || true
+systemctl --user enable wireplumber 2>/dev/null || true
+
+# =============================================================================
+# Bluetooth
+# =============================================================================
+echo "[TERANGOS] Configuration Bluetooth..."
+systemctl enable bluetooth 2>/dev/null || true
+
+# =============================================================================
+# Udev rules
+# =============================================================================
+echo "[TERANGOS] Configuration udev..."
+mkdir -p /etc/udev/rules.d
+echo 'SUBSYSTEM=="usb", GROUP="plugdev", MODE="0660"' > /etc/udev/rules.d/99-terangaos.rules
+echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="046d", ATTR{idProduct}=="c52b", GROUP="plugdev"' >> /etc/udev/rules.d/99-terangaos.rules
+
+# =============================================================================
+# XDG directories for user
+# =============================================================================
+if id teranga &>/dev/null; then
+    echo "[TERANGOS] Configuration XDG pour teranga..."
+    mkdir -p /home/teranga/{.cache,.local/share,.config}
+    chown -R teranga:teranga /home/teranga
+fi
+
+echo "[TERANGOS] Desktop Environment configuré"

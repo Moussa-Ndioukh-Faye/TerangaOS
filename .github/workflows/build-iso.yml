@@ -1,0 +1,64 @@
+name: Build TerangaOS ISO
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            live-build \
+            debootstrap \
+            git \
+            curl \
+            wget \
+            pkg-config \
+            build-essential
+
+      - name: Configure live-build
+        run: |
+          cd live-build-config
+          sudo lb config --distribution bookworm \
+            --parent-mirror-bootstrap http://deb.debian.org/debian \
+            --parent-mirror-chroot http://deb.debian.org/debian \
+            --parent-mirror-binary http://deb.debian.org/debian \
+            --architectures amd64 \
+            --binary-images iso-hybrid
+
+      - name: Build ISO
+        run: |
+          cd live-build-config
+          sudo lb build --verbose
+
+      - name: Rename ISO
+        run: |
+          mv live-build-config/*.iso terangaos-1.0-amd64.iso 2>/dev/null || true
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terangaos-iso
+          path: terangaos-1.0-amd64.iso
+          retention-days: 30
+
+      - name: Upload SHA256
+        run: |
+          sha256sum terangaos-1.0-amd64.iso > terangaos-1.0-amd64.sha256
+          
+      - name: Upload SHA256 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terangaos-sha256
+          path: terangaos-1.0-amd64.sha256
+          retention-days: 30

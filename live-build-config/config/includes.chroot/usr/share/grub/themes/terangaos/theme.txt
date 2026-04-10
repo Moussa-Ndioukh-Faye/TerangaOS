@@ -1,0 +1,43 @@
+# TérangaOS — GRUB Theme
+# Djolof Theme
+
+title-text: "TérangaOS 1.0 Djolof"
+title-font: "JetBrains Mono Regular 16"
+title-color: "#FFBE00"
+
+message-font: "JetBrains Mono Regular 12"
+message-color: "#F5EDD8"
+
++ boot_menu {
+    left = 50%
+    top = 50%
+    width = 60%
+    height = 50%
+    item_font = "JetBrains Mono Regular 14"
+    item_color = "#F5EDD8"
+    selected_item_color = "#FFBE00"
+    item_height = 30
+    item_padding = 5
+    item_icon_space = 15
+    normal_icon = "terminal"
+    selected_icon = "forward"
+}
+
++ image {
+    path = terangaos-grub.png
+    left = 5%
+    top = 5%
+    width = 150
+    height = auto
+}
+
++ progress_bar {
+    left = 10%
+    top = 90%
+    width = 80%
+    height = 10
+    border = 2
+    border_color = "#FFBE00"
+    fill = "#C85200"
+    bg_color = "#1A1408"
+}
