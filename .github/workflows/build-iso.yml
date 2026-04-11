@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,28 +24,50 @@ jobs:
             curl \
             wget \
             pkg-config \
-            build-essential
+            build-essential \
+            python3 \
+            fuse \
+            libfuse2
+
+      - name: Check live-build config
+        run: |
+          ls -la live-build-config/
+          ls -la live-build-config/config/ || echo "No config found"
 
       - name: Configure live-build
         run: |
           cd live-build-config
+          if [ ! -d "config" ]; then
+            mkdir -p config
+          fi
           sudo lb config --distribution bookworm \
             --parent-mirror-bootstrap http://deb.debian.org/debian \
             --parent-mirror-chroot http://deb.debian.org/debian \
             --parent-mirror-binary http://deb.debian.org/debian \
             --architectures amd64 \
-            --binary-images iso-hybrid
+            --binary-images iso-hybrid \
+            --bootloader syslinux \
+            --iso-volume "TerangaOS-1.0" \
+            --archive-area main
 
       - name: Build ISO
         run: |
           cd live-build-config
-          sudo lb build --verbose
+          sudo lb build --verbose 2>&1 | tee build.log
+
+      - name: Show build output
+        run: |
+          ls -la live-build-config/*.iso 2>/dev/null || echo "No ISO found"
+          tail -50 live-build-config/build.log 2>/dev/null || true
 
       - name: Rename ISO
         run: |
-          mv live-build-config/*.iso terangaos-1.0-amd64.iso 2>/dev/null || true
+          if [ -f "live-build-config/*.iso" ]; then
+            mv live-build-config/*.iso terangaos-1.0-amd64.iso
+          fi
 
       - name: Upload ISO artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: terangaos-iso
@@ -53,12 +75,22 @@ jobs:
           retention-days: 30
 
       - name: Upload SHA256
+        if: success()
         run: |
           sha256sum terangaos-1.0-amd64.iso > terangaos-1.0-amd64.sha256
           
       - name: Upload SHA256 artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: terangaos-sha256
           path: terangaos-1.0-amd64.sha256
           retention-days: 30
+
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: live-build-config/build.log
+          retention-days: 7
