@@ -13,6 +13,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,13 +31,18 @@ jobs:
             squashfs-tools \
             genisoimage \
             syslinux \
-            isolinux
+            isolinux \
+            xorriso
 
-      - name: Clean completely
+      - name: Clean build directory
         run: |
-          rm -rf live-build-config/*
+          rm -rf live-build-config/.build
+          rm -rf live-build-config/chroot
+          rm -rf live-build-config/temp
+          rm -f live-build-config/*.iso
+          rm -f live-build-config/*.log
 
-      - name: Configure fresh
+      - name: Configure live-build
         run: |
           cd live-build-config
           sudo lb config \
@@ -44,36 +50,44 @@ jobs:
             --parent-mirror-bootstrap http://deb.debian.org/debian \
             --parent-mirror-chroot http://deb.debian.org/debian \
             --parent-mirror-binary http://deb.debian.org/debian \
+            --parent-mirror-chroot-security http://security.debian.org/debian-security \
+            --parent-mirror-binary-security http://security.debian.org/debian-security \
             --architectures amd64 \
             --binary-images iso-hybrid \
             --bootloader syslinux \
-            --iso-volume TerangaOS \
-            --debian-installer false
+            --iso-volume TERANGOS \
+            --debian-installer false \
+            --archive-area main
 
-      - name: Create minimal package list
+      - name: Verify config
         run: |
-          mkdir -p live-build-config/config/package-lists
-          echo -e "systemd\nsystemd-sysv\ndbus\nnetwork-manager\ncurl\nwget\ngit" > live-build-config/config/package-lists/base.list.chroot
+          echo "=== Checking config ==="
+          ls -la live-build-config/config/
+          cat live-build-config/config/package-lists/base.list.chroot
 
-      - name: Build
+      - name: Build ISO
         run: |
           cd live-build-config
-          sudo lb build --verbose 2>&1 | tee build.log
+          sudo lb build 2>&1 | tee build.log
 
-      - name: Show build result
+      - name: Check output
         run: |
-          echo "=== Build status ==="
-          ls -la live-build-config/*.iso 2>/dev/null || echo "No ISO found"
+          echo "=== Checking for ISO ==="
+          find live-build-config -name "*.iso" -type f 2>/dev/null
+          ls -la live-build-config/*.iso 2>/dev/null || echo "No ISO in root"
+          ls -la live-build-config/binary 2>/dev/null || echo "No binary dir"
 
       - name: Upload ISO
         uses: actions/upload-artifact@v4
         with:
           name: terangaos-iso
-          path: live-build-config/*.iso
+          path: |
+            live-build-config/*.iso
+            live-build-config/binary*.iso
           retention-days: 30
           if-no-files-found: warn
 
-      - name: Upload log
+      - name: Upload build log
         if: always()
         uses: actions/upload-artifact@v4
         with:
