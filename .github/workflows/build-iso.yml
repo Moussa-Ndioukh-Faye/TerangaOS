@@ -7,6 +7,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,41 +27,56 @@ jobs:
             curl \
             wget \
             build-essential \
-            fuse \
-            libfuse2 \
             squashfs-tools \
             genisoimage \
             syslinux \
             isolinux
 
-      - name: Clean previous build
+      - name: Clean completely
         run: |
-          rm -rf live-build-config/config
-          rm -rf live-build-config/chroot
-          rm -rf live-build-config/temp
-          rm -f live-build-config/*.iso
-          rm -f live-build-config/*.log
+          rm -rf live-build-config/*
 
-      - name: Configure live-build
+      - name: Configure fresh
         run: |
           cd live-build-config
-          sudo lb config --distribution bookworm --parent-mirror-bootstrap http://deb.debian.org/debian --parent-mirror-chroot http://deb.debian.org/debian --parent-mirror-binary http://deb.debian.org/debian --architectures amd64 --binary-images iso-hybrid --bootloader syslinux --iso-volume TerangaOS
+          sudo lb config \
+            --distribution bookworm \
+            --parent-mirror-bootstrap http://deb.debian.org/debian \
+            --parent-mirror-chroot http://deb.debian.org/debian \
+            --parent-mirror-binary http://deb.debian.org/debian \
+            --architectures amd64 \
+            --binary-images iso-hybrid \
+            --bootloader syslinux \
+            --iso-volume TerangaOS \
+            --debian-installer false
 
-      - name: Build ISO
+      - name: Create minimal package list
+        run: |
+          mkdir -p live-build-config/config/package-lists
+          echo -e "systemd\nsystemd-sysv\ndbus\nnetwork-manager\ncurl\nwget\ngit" > live-build-config/config/package-lists/base.list.chroot
+
+      - name: Build
         run: |
           cd live-build-config
-          sudo lb build --verbose 2>&1 || echo "Build exit code: $?"
+          sudo lb build --verbose 2>&1 | tee build.log
 
-      - name: Show last 50 lines of build
+      - name: Show build result
         run: |
-          tail -50 live-build-config/build.log
+          echo "=== Build status ==="
+          ls -la live-build-config/*.iso 2>/dev/null || echo "No ISO found"
 
-      - name: Find ISO
-        run: |
-          echo "=== Looking for ISO ==="
-          ls -la live-build-config/*.iso 2>/dev/null
-          ls -la live-build-config/binary/*.iso 2>/dev/null
-          ls -la live-build-config/image* 2>/dev/null
-          find live-build-config -maxdepth 1 -name "*.iso" 2>/dev/null
-          echo "=== All files in live-build-config ==="
-          sudo find live-build-config -maxdepth 1 -type f 2>/dev/null | head -20
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: terangaos-iso
+          path: live-build-config/*.iso
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: live-build-config/build.log
+          retention-days: 7
