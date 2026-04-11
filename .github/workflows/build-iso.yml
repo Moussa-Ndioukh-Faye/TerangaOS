@@ -23,74 +23,51 @@ jobs:
             git \
             curl \
             wget \
-            pkg-config \
             build-essential \
-            python3 \
             fuse \
-            libfuse2
+            libfuse2 \
+            squashfs-tools \
+            genisoimage \
+            syslinux \
+            isolinux
 
-      - name: Check live-build config
+      - name: Clean previous build
         run: |
-          ls -la live-build-config/
-          ls -la live-build-config/config/ || echo "No config found"
+          rm -rf live-build-config/config
+          rm -rf live-build-config/chroot
+          rm -f live-build-config/*.iso
+          rm -f live-build-config/build.log
 
       - name: Configure live-build
         run: |
           cd live-build-config
-          if [ ! -d "config" ]; then
-            mkdir -p config
-          fi
-          sudo lb config --distribution bookworm \
+          sudo lb config \
+            --distribution bookworm \
             --parent-mirror-bootstrap http://deb.debian.org/debian \
             --parent-mirror-chroot http://deb.debian.org/debian \
             --parent-mirror-binary http://deb.debian.org/debian \
             --architectures amd64 \
             --binary-images iso-hybrid \
             --bootloader syslinux \
-            --iso-volume "TerangaOS-1.0" \
-            --archive-area main
+            --iso-volume "TerangaOS"
 
       - name: Build ISO
         run: |
           cd live-build-config
           sudo lb build --verbose 2>&1 | tee build.log
+          echo "=== BUILD COMPLETE ==="
+          ls -la *.iso 2>/dev/null || echo "ISO NOT FOUND"
 
-      - name: Show build output
+      - name: Show build log on failure
+        if: failure()
         run: |
-          ls -la live-build-config/*.iso 2>/dev/null || echo "No ISO found"
-          tail -50 live-build-config/build.log 2>/dev/null || true
+          echo "=== LAST 100 LINES OF BUILD LOG ==="
+          tail -100 live-build-config/build.log
 
-      - name: Rename ISO
-        run: |
-          if [ -f "live-build-config/*.iso" ]; then
-            mv live-build-config/*.iso terangaos-1.0-amd64.iso
-          fi
-
-      - name: Upload ISO artifact
+      - name: Upload ISO
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: terangaos-iso
-          path: terangaos-1.0-amd64.iso
+          path: live-build-config/*.iso
           retention-days: 30
-
-      - name: Upload SHA256
-        if: success()
-        run: |
-          sha256sum terangaos-1.0-amd64.iso > terangaos-1.0-amd64.sha256
-          
-      - name: Upload SHA256 artifact
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: terangaos-sha256
-          path: terangaos-1.0-amd64.sha256
-          retention-days: 30
-
-      - name: Upload build log
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-log
-          path: live-build-config/build.log
-          retention-days: 7
