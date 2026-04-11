@@ -35,39 +35,42 @@ jobs:
         run: |
           rm -rf live-build-config/config
           rm -rf live-build-config/chroot
+          rm -rf live-build-config/temp
           rm -f live-build-config/*.iso
-          rm -f live-build-config/build.log
+          rm -f live-build-config/*.log
 
       - name: Configure live-build
         run: |
           cd live-build-config
-          sudo lb config \
-            --distribution bookworm \
-            --parent-mirror-bootstrap http://deb.debian.org/debian \
-            --parent-mirror-chroot http://deb.debian.org/debian \
-            --parent-mirror-binary http://deb.debian.org/debian \
-            --architectures amd64 \
-            --binary-images iso-hybrid \
-            --bootloader syslinux \
-            --iso-volume "TerangaOS"
+          sudo lb config --distribution bookworm --parent-mirror-bootstrap http://deb.debian.org/debian --parent-mirror-chroot http://deb.debian.org/debian --parent-mirror-binary http://deb.debian.org/debian --architectures amd64 --binary-images iso-hybrid --bootloader syslinux --iso-volume TerangaOS
+
+      - name: Show config exists
+        run: ls -la live-build-config/config/
 
       - name: Build ISO
         run: |
           cd live-build-config
           sudo lb build --verbose 2>&1 | tee build.log
-          echo "=== BUILD COMPLETE ==="
-          ls -la *.iso 2>/dev/null || echo "ISO NOT FOUND"
 
-      - name: Show build log on failure
-        if: failure()
+      - name: List output files
         run: |
-          echo "=== LAST 100 LINES OF BUILD LOG ==="
-          tail -100 live-build-config/build.log
+          echo "=== Files in live-build-config ==="
+          ls -la live-build-config/
+          echo "=== ISO files ==="
+          find live-build-config -name "*.iso" -type f
 
       - name: Upload ISO
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: terangaos-iso
           path: live-build-config/*.iso
           retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: live-build-config/build.log
+          retention-days: 7
