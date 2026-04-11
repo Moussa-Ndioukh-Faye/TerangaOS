@@ -44,33 +44,35 @@ jobs:
           cd live-build-config
           sudo lb config --distribution bookworm --parent-mirror-bootstrap http://deb.debian.org/debian --parent-mirror-chroot http://deb.debian.org/debian --parent-mirror-binary http://deb.debian.org/debian --architectures amd64 --binary-images iso-hybrid --bootloader syslinux --iso-volume TerangaOS
 
-      - name: Show config exists
-        run: ls -la live-build-config/config/
-
       - name: Build ISO
         run: |
           cd live-build-config
           sudo lb build --verbose 2>&1 | tee build.log
+          echo "Exit code: $?"
 
-      - name: List output files
+      - name: Find ISO files
         run: |
-          echo "=== Files in live-build-config ==="
-          ls -la live-build-config/
-          echo "=== ISO files ==="
-          find live-build-config -name "*.iso" -type f
-
-      - name: Upload ISO
-        uses: actions/upload-artifact@v4
-        with:
-          name: terangaos-iso
-          path: live-build-config/*.iso
-          retention-days: 30
-          if-no-files-found: warn
+          echo "=== Root dir ==="
+          ls -la live-build-config/*.iso 2>/dev/null || echo "No ISO in root"
+          echo "=== Binary dir ==="
+          ls -la live-build-config/binary/*.iso 2>/dev/null || echo "No ISO in binary"
+          echo "=== All ISO anywhere ==="
+          sudo find live-build-config -name "*.iso" -type f 2>/dev/null
 
       - name: Upload build log
-        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: build-log
           path: live-build-config/build.log
-          retention-days: 7
+          retention-days: 30
+
+      - name: Upload ISO
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terangaos-iso
+          path: |
+            live-build-config/*.iso
+            live-build-config/binary/*.iso
+          retention-days: 30
+          if-no-files-found: warn
