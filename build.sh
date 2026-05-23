@@ -115,6 +115,7 @@ configure_live_build() {
         --bootappend-live "boot=live components locales=fr_FR.UTF-8 keyboard-layouts=fr" \
         --iso-volume "TerangaOS-1.0-Djolof" \
         --iso-publisher "ESP-UCAD-Dakar-TerangaOS-Project" \
+        --verbose \
         2>&1 | tee -a "$LOG_FILE"
     
     log "OK: live-build configuré"
@@ -125,7 +126,12 @@ build_iso() {
     log "Voir le progrès dans: $LOG_FILE"
     log ""
     
-    sudo lb build 2>&1 | tee -a "$LOG_FILE"
+    if ! sudo lb build --verbose 2>&1 | tee -a "$LOG_FILE"; then
+        log "ERREUR: Le build a échoué."
+        log "=== Dernières lignes du log ==="
+        tail -n 50 "$LOG_FILE"
+        exit 1
+    fi
 }
 
 finalize() {

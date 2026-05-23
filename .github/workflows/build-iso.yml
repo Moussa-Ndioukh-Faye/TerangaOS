@@ -34,11 +34,16 @@ jobs:
             isolinux \
             xorriso
 
+      - name: Check disk space
+        run: df -h
+
       - name: Clean build directory
         run: |
+          cd live-build-config
+          sudo lb clean --purge || true
+          cd ..
           rm -rf live-build-config/.build
           rm -rf live-build-config/chroot
-          rm -rf live-build-config/temp
           rm -f live-build-config/*.iso
           rm -f live-build-config/*.log
 
@@ -57,25 +62,45 @@ jobs:
             --bootloader syslinux \
             --iso-volume TERANGOS \
             --debian-installer false \
-            --archive-area main
+            --archive-area main \
+            --cache yes \
+            --verbose
 
       - name: Verify config
         run: |
           echo "=== Checking config ==="
           ls -la live-build-config/config/
-          cat live-build-config/config/package-lists/base.list.chroot
+          if [ -d live-build-config/config/package-lists ]; then
+            ls -la live-build-config/config/package-lists/
+            cat live-build-config/config/package-lists/*.list.chroot || echo "No list files"
+          fi
 
       - name: Build ISO
         run: |
           cd live-build-config
-          sudo lb build 2>&1 | tee build.log
+          sudo lb build --verbose 2>&1 | tee build.log
+          BUILD_STATUS=${PIPESTATUS[0]}
+          if [ $BUILD_STATUS -ne 0 ]; then
+            echo "ERROR: Build failed with status $BUILD_STATUS"
+            echo "=== Last 100 lines of build log ==="
+            tail -n 100 build.log
+            exit $BUILD_STATUS
+          fi
 
       - name: Check output
         run: |
           echo "=== Checking for ISO ==="
-          find live-build-config -name "*.iso" -type f 2>/dev/null
-          ls -la live-build-config/*.iso 2>/dev/null || echo "No ISO in root"
-          ls -la live-build-config/binary 2>/dev/null || echo "No binary dir"
+          ISO_FILE=$(find live-build-config -name "*.iso" -type f | head -n 1)
+          if [ -n "$ISO_FILE" ]; then
+            echo "Found ISO: $ISO_FILE"
+            ls -lh "$ISO_FILE"
+          else
+            echo "ERROR: No ISO file generated"
+            echo "=== Directory contents ==="
+            ls -la live-build-config/
+            ls -la live-build-config/binary/ || echo "Binary directory not found"
+            exit 1
+          fi
 
       - name: Upload ISO
         uses: actions/upload-artifact@v4
