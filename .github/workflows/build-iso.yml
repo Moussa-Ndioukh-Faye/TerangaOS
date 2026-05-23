@@ -32,7 +32,8 @@ jobs:
             genisoimage \
             syslinux \
             isolinux \
-            xorriso
+            xorriso \
+            debian-archive-keyring
 
       - name: Check disk space
         run: df -h
@@ -64,6 +65,7 @@ jobs:
             --debian-installer false \
             --archive-area main \
             --cache yes \
+            --keyring-packages debian-archive-keyring \
             --verbose
 
       - name: Verify config
