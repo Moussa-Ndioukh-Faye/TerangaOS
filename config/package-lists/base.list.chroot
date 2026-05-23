@@ -1,19 +1,14 @@
-systemd
-systemd-sysv
-dbus
-network-manager
-curl
-wget
-git
-bash
-bash-completion
-zsh
-htop
-neofetch
-file-roller
-fonts-noto
-fonts-noto-cjk
-xdg-utils
-xdg-user-dirs
-glow
+systemd systemd-sysv dbus
+pipewire pipewire-audio pipewire-alsa wireplumber
+network-manager network-manager-gnome
+polkitd polkit-1
+gvfs udisks2 udiskie
+xdg-utils xdg-user-dirs
+fonts-noto fonts-noto-cjk fonts-font-awesome
+curl wget git unzip tar gzip
+bash-completion zsh
+htop btop neofetch
+thunar thunar-volman
+firefox-esr
 libnotify-bin
+glow

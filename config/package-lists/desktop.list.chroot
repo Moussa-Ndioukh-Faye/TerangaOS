@@ -1,6 +1,5 @@
-wayland-utils
-xwayland
-kitty
+sddm sddm-theme-debian-elarun
+wayland-utils xwayland
 waybar
 wofi
 mako
@@ -8,12 +7,11 @@ swaybg
 grim
 slurp
 wl-clipboard
+imv
+mpv
 pavucontrol
-nm-connection-editor
 blueman
-thunar
-gvfs-backends
-polkit-gnome-agent-1
-udiskie
-cliphist
-fonts-font-awesome
+thunar gvfs-backends
+policykit-1-gnome
+qt5-wayland qt6-wayland
+swappy

@@ -71,42 +71,43 @@ prepare_dirs() {
 }
 
 create_package_lists() {
-    log "Vérification des package lists..."
+    log "Synchronisation des package lists..."
     
-    if [ ! -f config/package-lists/base.list.chroot ]; then
-        log "Copie des package lists vers live-build-config..."
+    if [ -d config/package-lists ]; then
         cp -r config/package-lists/* live-build-config/config/package-lists/
+        log "OK: Package lists copiées vers live-build-config"
+    else
+        log "ERREUR: Dossier config/package-lists introuvable"
+        exit 1
     fi
-    
-    log "OK: Package lists prêtes"
 }
 
 create_configs() {
-    log "Vérification des configurations..."
+    log "Synchronisation des configurations..."
     
-    if [ -d config/includes.chroot/etc ]; then
-        log "Copie des configurations vers live-build-config..."
+    if [ -d config/includes.chroot ]; then
         cp -r config/includes.chroot/* live-build-config/config/includes.chroot/
-        log "OK: Configurations copiées dans live-build-config/"
+        log "OK: Configurations copiées vers live-build-config"
     fi
-    
-    log "OK: Configurations prêtes"
 }
 
 create_hooks() {
     log "Création des hooks..."
     bash scripts/write-hooks.sh
-    if [ -d scripts/config/hooks/live ]; then
-        cp -r scripts/config/hooks/live/* live-build-config/config/hooks/live/
+    if [ -d config/hooks/live ]; then
+        cp -r config/hooks/live/* live-build-config/config/hooks/live/
+        log "OK: Hooks copiés vers live-build-config"
+    else
+        log "ERREUR: Hooks non générés dans config/hooks/live"
+        exit 1
     fi
-    log "OK: Hooks copiés vers live-build-config"
 }
 
 configure_live_build() {
     log "Configuration de live-build..."
     
     lb config \
-        --distribution trixie \
+        --distribution bookworm \
         --architecture amd64 \
         --binary-images iso-hybrid \
         --debian-installer live \

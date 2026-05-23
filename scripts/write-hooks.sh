@@ -305,7 +305,7 @@ cat > "$HOOKS_DIR/0007-performance-tuning.hook.chroot" << 'EOF'
 #!/bin/bash
 set -e
 
-echo "[HOOK 7/7] Optimisation des performances système..."
+echo "[HOOK 7/8] Optimisation des performances système..."
 
 # Installation de zram-tools
 apt-get install -y zram-tools
@@ -342,4 +342,28 @@ EOF
 
 chmod +x "$HOOKS_DIR/0007-performance-tuning.hook.chroot"
 
-echo "[OK] Tous les hooks (1-7) créés dans $HOOKS_DIR"
+# =============================================================================
+# Hook 8: AI Stack (Pip installs)
+# =============================================================================
+cat > "$HOOKS_DIR/0008-ai-stack.hook.chroot" << 'EOF'
+#!/bin/bash
+set -e
+
+echo "[HOOK 8/8] Installation de la stack IA (Pip)..."
+
+# Installation via pip car les versions Debian sont souvent obsolètes ou manquantes
+pip3 install --break-system-packages \
+    torch torchvision torchaudio \
+    streamlit gradio \
+    langchain langchain-community \
+    transformers huggingface-hub tokenizers \
+    accelerate peft trl \
+    openai anthropic \
+    pymupdf qdrant-client faiss-cpu
+
+echo "[OK] Stack IA installée"
+EOF
+
+chmod +x "$HOOKS_DIR/0008-ai-stack.hook.chroot"
+
+echo "[OK] Tous les hooks (1-8) créés dans $HOOKS_DIR"

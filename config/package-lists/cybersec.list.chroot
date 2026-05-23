@@ -4,10 +4,16 @@ aircrack-ng
 john
 hashcat
 tcpdump
-netcat-traditional
+netcat-openbsd
 hydra
 sqlmap
+nikto
 gobuster
 dirb
+steghide
+exiftool
 binwalk
 gdb
+strace
+ltrace
+volatility3
