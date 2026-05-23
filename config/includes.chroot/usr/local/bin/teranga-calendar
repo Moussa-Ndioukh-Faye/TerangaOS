@@ -1,0 +1,31 @@
+#!/bin/bash
+# TérangaOS — Script Calendrier National du Sénégal
+
+# Liste des jours fériés fixes
+FERIES_FIXES=(
+    "01-01:Jour de l'An"
+    "04-04:Fête de l'Indépendance"
+    "05-01:Fête du Travail"
+    "08-15:Assomption"
+    "11-01:Toussaint"
+    "12-25:Noël"
+)
+
+# Note: Les fêtes religieuses musulmanes (Tabaski, Korité, Magal, Gamou) 
+# varient chaque année. Pour une version pro, on pourrait utiliser une API.
+# Ici, on affiche un message d'information.
+
+DATE_JOUR=$(date +%m-%d)
+MESSAGE=""
+
+for fery in "${FERIES_FIXES[@]}"; do
+    if [[ "$fery" == "$DATE_JOUR"* ]]; then
+        MESSAGE="🇸🇳 Férié : ${fery#*:}"
+    fi
+done
+
+if [ -z "$MESSAGE" ]; then
+    echo "Dakar, Sénégal"
+else
+    echo "$MESSAGE"
+fi

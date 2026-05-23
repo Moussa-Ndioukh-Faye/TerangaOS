@@ -1,0 +1,63 @@
+#!/bin/bash
+set -e
+
+echo "[HOOK 5/5] Configuration utilisateur..."
+
+# Créer utilisateur
+useradd -m -s /bin/zsh -G sudo,video,audio,input,netdev,plugdev,wireshark,ketreanga 2>/dev/null || true
+echo "teranga:teranga" | chpasswd
+passwd -d root
+
+# Oh My Zsh
+su - teranga -c 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended'
+
+# Plugins
+su - teranga -c 'git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions'
+su - teranga -c 'git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting'
+
+# .zshrc
+cat > /home/teranga/.zshrc << 'ZSHRC'
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="agnoster"
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting docker)
+source $ZSH/oh-my-zsh.sh
+export LANG=fr_FR.UTF-8
+export EDITOR=nano
+alias ll='ls -la --color=auto'
+alias update='sudo apt update && sudo apt upgrade -y'
+alias ai='ollama run llama3.1'
+alias docs='glow /etc/terangaos/docs/guide_fr.md'
+echo "Bienvenue sur TérangaOS — Dalal ak diam"
+ZSHRC
+
+# Permissions et scripts
+chmod +x /usr/local/bin/teranga-theme-engine
+chmod +x /usr/local/bin/teranga-services
+chmod +x /usr/local/bin/teranga-calendar
+chmod +x /usr/local/bin/teranga-data-saver
+
+# Lancement du thème au démarrage de la session
+mkdir -p /home/teranga/.config/autostart
+cat > /home/teranga/.config/autostart/teranga-theme.desktop << 'EAUTO'
+[Desktop Entry]
+Type=Application
+Exec=/usr/local/bin/teranga-theme-engine
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=Teranga Theme Engine
+EAUTO
+
+chown -R teranga:teranga /home/teranga/.zshrc /home/teranga/.config/autostart
+
+# Wayland session
+mkdir -p /usr/share/wayland-sessions
+cat > /usr/share/wayland-sessions/hyprland.desktop << 'EWAY'
+[Desktop Entry]
+Name=Hyprland
+Comment=TérangaOS — Hyprland Wayland Compositor
+Exec=Hyprland
+Type=Application
+EWAY
+
+echo "[OK] Utilisateur configuré"

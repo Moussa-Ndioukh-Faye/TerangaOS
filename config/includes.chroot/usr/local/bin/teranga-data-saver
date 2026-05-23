@@ -1,0 +1,33 @@
+#!/bin/bash
+# TérangaOS — Script Mode Économie de Données
+
+STATE_FILE="/tmp/teranga-data-saver"
+
+toggle() {
+    if [ -f "$STATE_FILE" ]; then
+        # Désactiver le mode économie
+        rm "$STATE_FILE"
+        notify-send "TérangaOS" "Mode Économie de Données DÉSACTIVÉ" -i network-transmit-receive
+        # Réactiver les services gourmands si nécessaire
+    else
+        # Activer le mode économie
+        touch "$STATE_FILE"
+        notify-send "TérangaOS" "Mode Économie de Données ACTIVÉ" -i network-offline
+        # Actions : Bloquer les updates, suspendre Ollama sync, etc.
+        pkill -f "ollama serve" || true
+    fi
+}
+
+status() {
+    if [ -f "$STATE_FILE" ]; then
+        echo "📡 ÉCO"
+    else
+        echo "🌐 FULL"
+    fi
+}
+
+case "$1" in
+    toggle) toggle ;;
+    status) status ;;
+    *) echo "Usage: $0 {toggle|status}" ;;
+esac

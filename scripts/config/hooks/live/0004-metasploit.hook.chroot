@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+echo "[HOOK 4/5] Installation Metasploit..."
+
+curl -fsSL https://apt.metasploit.com/metasploit-framework.gpg | \
+    gpg --dearmor > /etc/apt/trusted.gpg.d/metasploit.gpg
+echo "deb https://apt.metasploit.com/ buster main" > \
+    /etc/apt/sources.list.d/metasploit.list
+
+apt-get update
+apt-get install -y metasploit-framework
+
+echo "[OK] Metasploit installé"

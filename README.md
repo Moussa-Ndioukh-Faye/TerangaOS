@@ -1,265 +1,82 @@
-# TérangaOS
+# TérangaOS — Optimized & Senegalese Edition
 
 **"Dalal ak diam" — Bienvenue en paix**
 
-Distribution GNU/Linux spécialisée en **cybersécurité**, **développement** et **intelligence artificielle**.
-Construite à l'**ESP/UCAD Dakar, Sénégal** 🌍
-
-**Version**: 1.0 | **Codename**: Djolof | **Base**: Debian 12 Bookworm
+Distribution GNU/Linux sénégalaise spécialisée en **Cybersécurité**, **Développement** et **IA**, optimisée pour la performance et adaptée aux services locaux.
+Construite à l'**ESP/UCAD Dakar** 🌍
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Architecture & Optimisation
 
-```
-┌─────────────────────────────────────────────────────┐
-│              TérangaOS 1.0 (Djolof)               │
-├─────────────────────────────────────────────────────┤
-│  🪟 HYPRLAND 0.41                                 │
-│     Compositeur Wayland · Tiling dynamique           │
-├─────────────────────────────────────────────────────┤
-│  🌊 WAYLAND / PIPEWIRE                             │
-│     Wayland protocols · XWayland · Pipewire 1.0    │
-├─────────────────────────────────────────────────────┤
-│  ⚙️  SYSTEMD + SDDM                                │
-│     systemd 254 · SDDM · Polkit · D-Bus             │
-├─────────────────────────────────────────────────────┤
-│  🐧 KERNEL 6.8 LTS                                 │
-│     Linux 6.8 · glibc 2.37 · busybox · bash 5.2   │
-├─────────────────────────────────────────────────────┤
-│  💻 HARDWARE (amd64/x86_64)                        │
-└─────────────────────────────────────────────────────┘
-```
+TérangaOS est conçu pour être à la fois puissant et léger :
+
+- **Noyau Linux 6.8 LTS Optimisé :** Configuré pour une faible latence (`PREEMPT`), un scheduler réactif (`HZ=1000`) et une consommation mémoire réduite.
+- **Interface Hyprland Ultra-Rapide :** Compositeur Wayland avec animations accélérées, VFR (Variable Frame Rate) activé et effets visuels coûteux désactivés pour une fluidité maximale.
+- **Base Debian 12 (Djolof) :** La stabilité de Debian combinée à des outils de pointe.
+
+## 🇸🇳 Services Sénégal & Innovation Locale
+
+Une interface simplifiée et intelligente pour répondre aux besoins locaux :
+
+- **Tableau de Bord "Sénégal" :** Accès direct (`SUPER + S`) aux services publics, universités et paiements.
+- **Calendrier National :** Affichage en temps réel des jours fériés et événements nationaux dans la barre de tâches.
+- **Mode Économie de Données :** Activez (`clic barre de tâches`) un mode restrictif pour économiser votre forfait mobile (bloque les mises à jour et les services IA gourmands).
+- **Documentation Hors-Ligne :** Un guide complet (`SUPER + D`) accessible sans internet pour ne jamais être bloqué.
 
 ## 📦 Les Trois Piliers
 
 ### 🔒 Cybersécurité
-| Outil | Rôle |
-|-------|------|
-| nmap | Scan réseau |
-| Wireshark | Analyse paquets |
-| Metasploit | Framework exploit |
-| Burp Suite | Proxy web |
-| Hashcat | Cracking passwords |
-| Aircrack-ng | Audit Wi-Fi |
-| Volatility 3 | Forensics mémoire |
+Outils de pentest, audit et forensics (Metasploit, Nmap, Wireshark, Burp Suite, Hashcat, Aircrack-ng).
 
 ### ⚡ Développement
-| Outil | Rôle |
-|-------|------|
-| VS Code | Éditeur principal |
-| Python 3.12 | Scripting & IA |
-| Node.js / npm | Runtime JS |
-| Rust | Systèmes/performance |
-| Docker | Conteneurs |
-| Git + GitHub CLI | Versioning |
+VS Code, Python 3.12, Node.js, Rust, Docker, et un terminal Zsh avec auto-complétion intelligente.
 
 ### 🤖 Intelligence Artificielle
-| Outil | Rôle |
-|-------|------|
-| Ollama | LLM local (Llama 3, Mistral) |
-| Open WebUI | Interface chat IA |
-| Jupyter Lab | Notebooks |
-| PyTorch | Deep learning |
-| LangChain | Pipelines LLM |
+**Ollama** local (Llama 3.1, Mistral) avec interface web et intégration bureau pour une IA privée et rapide.
 
 ---
 
-## 📁 Structure du Projet
+## 🚀 Guide Rapide
 
-```
-TerangaOS/
-├── build.sh                     # Script principal live-build
-├── clean.sh                     # Nettoyage
-│
-├── config/
-│   ├── package-lists/
-│   │   ├── base.list.chroot     # Paquets système
-│   │   ├── desktop.list.chroot  # Hyprland + Wayland
-│   │   ├── cybersec.list.chroot # Outils sécurité
-│   │   ├── dev.list.chroot     # Développement
-│   │   └── ai.list.chroot      # IA (Python, Jupyter)
-│   │
-│   ├── hooks/live/
-│   │   ├── 0001-base-config.hook.chroot
-│   │   ├── 0002-hyprland-build.hook.chroot
-│   │   ├── 0003-ollama-branding.hook.chroot
-│   │   ├── 0004-metasploit.hook.chroot
-│   │   └── 0005-users-setup.hook.chroot
-│   │
-│   └── includes.chroot/
-│       ├── etc/
-│       │   ├── os-release
-│       │   ├── motd
-│       │   ├── hostname
-│       │   └── sddm.conf.d/
-│       │
-│       └── home/teranga/.config/
-│           ├── hypr/hyprland.conf
-│           ├── waybar/config + style.css
-│           ├── kitty/kitty.conf
-│           ├── wofi/config + style.css
-│           └── mako/config
-│
-├── scripts/
-│   ├── write-hooks.sh          # Crée les hooks
-│   ├── inject-configs.sh       # Injecte configs Hyprland
-│   ├── config-hyprland.sh     # Config Hyprland
-│   ├── config-waybar.sh       # Config Waybar
-│   └── config-desktop.sh      # Config Desktop
-│
-├── poky/                       # Yocto build system
-├── meta-terangaos/              # Layer Yocto custom
-├── live-build-config/           # Alternative live-build
-│
-├── linux-master/               # Linux Kernel 6.x
-├── gcc-master/                 # GCC Compiler
-├── glibc/                     # GNU C Library
-│
-├── openssl/ zlib/ ncurses/
-├── busybox/ coreutils/ bash/
-├── grub/ syslinux/ openrc/
-├── dracut/ kbd/
-│
-├── xserver/ wayland/ sddm/
-├── NetworkManager/ pipewire/
-│
-├── terangaos_complete.html      # Guide de construction
-├── terangaos_brand_kit.html    # Kit de marque
-│
-└── README.md
-```
-
----
-
-## 🚀 Construction Rapide
-
-### Prérequis (Linux/WSL2)
-
+### Installation des dépendances (Linux/WSL2)
 ```bash
-sudo apt update
-sudo apt install -y \
-    live-build debootstrap git curl wget \
-    cmake ninja-build meson \
-    build-essential gcc g++ \
-    libwayland-dev libxkbcommon-dev \
-    libpango1.0-dev libcairo2-dev \
-    libseat-dev libinput-dev \
-    pkg-config
+chmod +x prepare-build.sh
+./prepare-build.sh deps
 ```
 
-### Build
-
+### Construction de l'ISO
 ```bash
-# Cloner le projet
-git clone https://github.com/terangaos/terangaos.git
-cd terangaos
-
-# Exécuter le build
 chmod +x build.sh
 sudo ./build.sh
-
-# Ou avec live-build directement
-cd live-build-config
-sudo lb build
 ```
 
-### Résultat
+### Raccourcis Clavier Essentiels
+| Touches | Action |
+|---------|--------|
+| `SUPER + Return` | Ouvrir le Terminal (Kitty) |
+| `SUPER + S` | **Menu Services Sénégal** 🇸🇳 |
+| `SUPER + D` | **Documentation Hors-Ligne** 📚 |
+| `SUPER + R` | Lanceur d'applications (Wofi) |
+| `SUPER + E` | Explorateur de fichiers (Thunar) |
+| `SUPER + Q` | Fermer la fenêtre active |
+| `SUPER + M` | Quitter la session |
 
-```
-output/
-└── terangaos-1.0-amd64.iso    # ~4-6 Go
-```
+## 🌓 Personnalisation Dynamique
+TérangaOS intègre un moteur de thème intelligent (`teranga-theme-engine`) qui adapte l'interface selon l'heure :
+- **Mode Djolof (06h - 18h) :** Palette Or et Terre pour une visibilité optimale le jour.
+- **Mode Harmattan (18h - 06h) :** Palette sombre et apaisante pour le travail de nuit.
+
 
 ---
 
-## 🎨 Thème
-
-### Palette
-| Couleur | Hex | Usage |
-|---------|-----|-------|
-| Or Djolof | #FFBE00 | Principal |
-| Terre de Dakar | #C85200 | Accent |
-| Harmattan | #FF7A30 | Warning |
-| Nuit de Gorée | #0A0702 | Background |
-| Braise | #1A1408 | Surface |
-| Sable du Sahel | #F5EDD8 | Texte |
-| Mangrove | #4FFFAA | Succès |
-| Atlantique | #7EC8FF | Info/IA |
-
-### Typographie
-- **Playfair Display** — Titres
-- **Syne** — Corps de texte
-- **JetBrains Mono** — Code/Terminal
+## 🎨 Identité Visuelle (Palette Djolof)
+- **Or Djolof :** `#FFBE00` (Brand)
+- **Terre de Dakar :** `#C85200` (Accent)
+- **Mangrove :** `#4FFFAA` (Succès/Services Sénégal)
+- **Nuit de Gorée :** `#0A0702` (Fond)
 
 ---
 
-## 📋 Scripts Disponibles
-
-| Script | Fonction |
-|--------|----------|
-| `build.sh` | Build principal avec live-build |
-| `clean.sh` | Nettoyage du build |
-| `scripts/write-hooks.sh` | Crée les hooks d'installation |
-| `scripts/inject-configs.sh` | Injecte les configs Hyprland |
-| `scripts/config-hyprland.sh` | Configure Hyprland |
-| `scripts/config-waybar.sh` | Configure Waybar |
-| `scripts/config-desktop.sh` | Configure Kitty/Wofi/Mako |
-
----
-
-## 🔧 Configuration
-
-### Locale
-```
-fr_FR.UTF-8
-```
-
-### Timezone
-```
-Africa/Dakar
-```
-
-### Hostname
-```
-terangaos
-```
-
-### Utilisateur
-```
-Username: teranga
-Password: teranga
-Shell: zsh
-Groups: sudo, video, audio, input, netdev, plugdev
-```
-
----
-
-## 📚 Documentation
-
-- [Guide de Construction Complet](terangaos_complete.html)
-- [Brand Kit & Architecture](terangaos_brand_kit.html)
-
----
-
-## 🤝 Contribution
-
-Projet académique — ESP/UCAD Dakar, Sénégal
-Licence: GPL-3.0
-
----
-
-## 🗺️ Roadmap
-
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 01 | Environnement de build | ✅ |
-| 02 | Configuration de base | ✅ |
-| 03 | Package lists (3 piliers) | ✅ |
-| 04 | Theming & Branding | ✅ |
-| 05 | Build & Test VM | 🔄 |
-| 06 | ISO finale & Livraison | ⏳ |
-
----
-
-**"Dalal ak diam" — L'hospitalité numérique africaine**
+**Projet Académique — ESP/UCAD Dakar, Sénégal**
+*"L'hospitalité numérique africaine au service de la performance."*

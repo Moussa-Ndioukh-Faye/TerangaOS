@@ -1,0 +1,45 @@
+#!/bin/bash
+set -e
+
+echo "[HOOK 3/5] Installation Ollama + Branding..."
+
+# Ollama
+curl -fsSL https://ollama.ai/install.sh | sh
+systemctl enable ollama || true
+
+# Open WebUI
+pip3 install open-webui --break-system-packages || true
+
+# Branding OS
+cat > /etc/os-release << 'EOS'
+NAME="TérangaOS"
+VERSION="1.0 (Djolof)"
+ID=terangaos
+ID_LIKE=debian
+PRETTY_NAME="TérangaOS 1.0 (Djolof)"
+ANSI_COLOR="1;33"
+HOME_URL="https://esp.sn"
+SUPPORT_URL="https://github.com/terangaos"
+BUG_REPORT_URL="https://github.com/terangaos/issues"
+VERSION_CODENAME=djolof
+EOS
+
+# MOTD
+cat > /etc/motd << 'EMOTD'
+
+  ████████╗███████╗██████╗  █████╗ ███╗  ██╗ ██████╗  █████╗
+     ██╔══╝██╔════╝██╔══██╗██╔══██╗████╗ ██║██╔════╝ ██╔══██╗
+     ██║   █████╗  ██████╔╝███████║██╔██╗██║██║ ████╗███████║
+     ██║   ██╔══╝  ██╔══██╗██╔══██║██║╚████║██║   ██║██╔══██║
+     ██║   ███████╗██║  ██║██║  ██║██║ ╚███║╚██████╔╝██║  ██║
+     ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚══╝ ╚═════╝ ╚═╝  ╚═╝
+
+  Version : 1.0 (Djolof) | Base : Debian 12 Bookworm
+  Piliers  : 🔒 Cybersécurité · ⚡ Développement · 🤖 IA
+  Origine  : ESP/UCAD Dakar, Sénégal
+
+  "Dalal ak diam" — Bienvenue en paix.
+
+EMOTD
+
+echo "[OK] Ollama + Branding installés"

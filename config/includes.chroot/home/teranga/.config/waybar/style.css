@@ -45,11 +45,45 @@ tooltip label {
 #battery,
 #network,
 #pulseaudio,
-#tray {
+#tray,
+#custom-logo,
+#custom-senegal {
     padding: 0 10px;
     margin: 2px 5px;
     background: rgba(255, 190, 0, 0.1);
     border-radius: 8px;
+}
+
+#custom-logo {
+    background: rgba(255, 190, 0, 0.2);
+    color: #FFBE00;
+    font-weight: bold;
+}
+
+#custom-senegal,
+#custom-calendar,
+#custom-datasaver {
+    padding: 0 10px;
+    margin: 2px 5px;
+    background: rgba(255, 190, 0, 0.1);
+    border-radius: 8px;
+}
+
+#custom-senegal {
+    background: rgba(79, 255, 170, 0.15);
+    color: #4FFFAA;
+    font-weight: bold;
+}
+
+#custom-calendar {
+    background: transparent;
+    color: #F5EDD8;
+    font-size: 11px;
+}
+
+#custom-datasaver {
+    background: rgba(126, 200, 255, 0.1);
+    color: #7EC8FF;
 }
 
 #window {

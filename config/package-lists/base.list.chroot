@@ -15,3 +15,5 @@ fonts-noto
 fonts-noto-cjk
 xdg-utils
 xdg-user-dirs
+glow
+libnotify-bin

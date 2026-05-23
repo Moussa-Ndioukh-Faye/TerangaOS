@@ -1,0 +1,36 @@
+#!/bin/bash
+set -e
+
+echo "[HOOK 7/7] Optimisation des performances système..."
+
+# Installation de zram-tools
+apt-get install -y zram-tools
+
+# Configuration ZRAM (zstd)
+cat > /etc/default/zramswap << 'EZRAM'
+ALGO=zstd
+PERCENT=50
+PRIORITY=100
+EZRAM
+
+# Optimisation Sysctl
+cat > /etc/sysctl.d/99-teranga-performance.conf << 'ESYS'
+# Privilégier la RAM sur le Swap
+vm.swappiness = 10
+# Pression sur le cache VFS (fluidité explorer)
+vm.vfs_cache_pressure = 50
+# Réactivité du scheduler
+kernel.sched_latency_ns = 10000000
+kernel.sched_min_granularity_ns = 1000000
+kernel.sched_wakeup_granularity_ns = 2000000
+# Network stack tweaks
+net.core.rmem_max = 16777216
+net.core.wmem_max = 16777216
+net.ipv4.tcp_rmem = 4096 87380 16777216
+net.ipv4.tcp_wmem = 4096 65536 16777216
+ESYS
+
+# Activation des services d'optimisation
+systemctl enable zramswap || true
+
+echo "[OK] Optimisations de performance appliquées"

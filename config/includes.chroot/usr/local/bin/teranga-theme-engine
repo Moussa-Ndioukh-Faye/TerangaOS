@@ -1,0 +1,20 @@
+#!/bin/bash
+# TérangaOS — Script de Thème Dynamique (Djolof / Harmattan)
+
+HORAIRE=$(date +%H)
+
+# Configuration Hyprland (Border Colors)
+# 06:00 - 18:00 : Thème Djolof (Or/Terre)
+# 18:00 - 06:00 : Thème Harmattan (Ember/Nuit)
+
+if [ "$HORAIRE" -ge 6 ] && [ "$HORAIRE" -lt 18 ]; then
+    # Thème Djolof (Jour)
+    hyprctl keyword general:col.active_border "rgba(FFBE00ff) rgba(C85200ff) 45deg"
+    # Notification
+    notify-send "TérangaOS" "Mode Djolof activé (Jour)" -i display
+else
+    # Thème Harmattan (Soir/Nuit)
+    hyprctl keyword general:col.active_border "rgba(FF7A30ff) rgba(0A0702ff) 45deg"
+    # Notification
+    notify-send "TérangaOS" "Mode Harmattan activé (Nuit)" -i display
+fi
