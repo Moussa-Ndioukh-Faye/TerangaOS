@@ -1,0 +1,25 @@
+#!/bin/bash
+# TérangaOS — inventaire des paquets (SBOM JSON) et nettoyage final
+set -euo pipefail
+
+echo "[TERANGA] Hook 9900 : SBOM et nettoyage"
+
+dpkg-query -W -f='${Package}\t${Version}\t${Architecture}\n' | python3 -c '
+import json, sys, datetime
+pkgs = []
+for line in sys.stdin:
+    name, version, arch = line.rstrip("\n").split("\t")
+    pkgs.append({"name": name, "version": version, "arch": arch})
+json.dump({
+    "os": "TérangaOS",
+    "version": "1.0",
+    "variant": open("/etc/terangaos/variant").read().strip(),
+    "build_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "packages": pkgs,
+}, open("/etc/terangaos-sbom.json", "w"), ensure_ascii=False, indent=2)
+'
+
+apt-get clean
+rm -rf /tmp/* /var/tmp/*
+
+echo "[OK] SBOM : /etc/terangaos-sbom.json"

@@ -1,0 +1,51 @@
+# TérangaOS — réglages GNOME par défaut (modifiables par chaque utilisateur)
+
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/terangaos/teranga-wallpaper.png'
+picture-uri-dark='file:///usr/share/backgrounds/terangaos/teranga-wallpaper.png'
+picture-options='zoom'
+
+[org/gnome/desktop/screensaver]
+picture-uri='file:///usr/share/backgrounds/terangaos/teranga-wallpaper.png'
+
+[org/gnome/desktop/interface]
+color-scheme='prefer-dark'
+accent-color='yellow'
+icon-theme='Papirus-Dark'
+font-name='Noto Sans 11'
+monospace-font-name='JetBrains Mono 11'
+clock-show-weekday=true
+
+[org/gnome/desktop/input-sources]
+sources=[('xkb', 'fr')]
+
+[org/gnome/desktop/wm/preferences]
+button-layout='appmenu:minimize,maximize,close'
+
+[org/gnome/shell]
+favorite-apps=['firefox-esr.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Console.desktop', 'org.gnome.TextEditor.desktop', 'teranga-services.desktop', 'install-terangaos.desktop']
+enabled-extensions=['dash-to-dock@micxgx.gmail.com', 'ubuntu-appindicators@ubuntu.com']
+
+[org/gnome/shell/extensions/dash-to-dock]
+dock-position='BOTTOM'
+extend-height=false
+dash-max-icon-size=40
+show-trash=false
+
+[org/gnome/settings-daemon/plugins/media-keys]
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
+name='Terminal'
+command='kgx'
+binding='<Super>Return'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
+name='Services Sénégal'
+command='teranga-services'
+binding='<Super><Alt>s'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2]
+name='Documentation TérangaOS'
+command='xdg-open /etc/terangaos/docs/guide_fr.md'
+binding='<Super>F1'

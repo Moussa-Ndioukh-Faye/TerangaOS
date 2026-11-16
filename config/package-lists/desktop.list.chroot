@@ -1,17 +1,9 @@
-sddm sddm-theme-debian-elarun
-wayland-utils xwayland
-waybar
-wofi
-mako
-swaybg
-grim
-slurp
-wl-clipboard
-imv
-mpv
-pavucontrol
-blueman
-thunar gvfs-backends
-policykit-1-gnome
-qt5-wayland qt6-wayland
-swappy
+# TérangaOS — bureau GNOME 48 (Debian 13)
+gnome-core gdm3
+gnome-tweaks gnome-shell-extensions gnome-shell-extension-manager
+gnome-shell-extension-dashtodock gnome-shell-extension-appindicator
+gnome-console gnome-text-editor nautilus loupe evince file-roller
+xdg-desktop-portal-gnome xdg-desktop-portal-gtk
+dconf-cli zenity
+mpv pavucontrol
+adwaita-icon-theme papirus-icon-theme gnome-themes-extra

@@ -1,20 +1,22 @@
 #!/bin/bash
-# TérangaOS — Script de Thème Dynamique (Djolof / Harmattan)
+# TérangaOS — thème dynamique Djolof (jour) / Harmattan (nuit) pour GNOME
+# Lancé à l'ouverture de session (/etc/xdg/autostart/teranga-theme-engine.desktop)
 
-HORAIRE=$(date +%H)
+HEURE=$(date +%-H)
 
-# Configuration Hyprland (Border Colors)
-# 06:00 - 18:00 : Thème Djolof (Or/Terre)
-# 18:00 - 06:00 : Thème Harmattan (Ember/Nuit)
-
-if [ "$HORAIRE" -ge 6 ] && [ "$HORAIRE" -lt 18 ]; then
-    # Thème Djolof (Jour)
-    hyprctl keyword general:col.active_border "rgba(FFBE00ff) rgba(C85200ff) 45deg"
-    # Notification
-    notify-send "TérangaOS" "Mode Djolof activé (Jour)" -i display
+if [ "$HEURE" -ge 6 ] && [ "$HEURE" -lt 18 ]; then
+    gsettings set org.gnome.desktop.interface color-scheme 'default'
+    gsettings set org.gnome.desktop.interface accent-color 'yellow' 2>/dev/null || true
+    MODE="Djolof (jour)"
 else
-    # Thème Harmattan (Soir/Nuit)
-    hyprctl keyword general:col.active_border "rgba(FF7A30ff) rgba(0A0702ff) 45deg"
-    # Notification
-    notify-send "TérangaOS" "Mode Harmattan activé (Nuit)" -i display
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+    gsettings set org.gnome.desktop.interface accent-color 'orange' 2>/dev/null || true
+    MODE="Harmattan (nuit)"
 fi
+
+FERIE=$(teranga-calendar)
+if [ "$FERIE" != "Dakar, Sénégal" ]; then
+    notify-send -i calendar "TérangaOS" "$FERIE"
+fi
+
+[ "${1:-}" = "--quiet" ] || notify-send -i preferences-desktop-theme "TérangaOS" "Mode $MODE activé"

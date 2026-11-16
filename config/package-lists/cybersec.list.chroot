@@ -1,19 +1,7 @@
-nmap
-wireshark
-aircrack-ng
-john
-hashcat
-tcpdump
-netcat-openbsd
-hydra
-sqlmap
-nikto
-gobuster
-dirb
-steghide
-exiftool
-binwalk
-gdb
-strace
-ltrace
-volatility3
+# Cybersécurité (variantes cyber et full)
+# Metasploit n'est pas dans Debian : il est ajouté par config/hooks/cyber/.
+nmap wireshark tshark tcpdump netcat-openbsd
+aircrack-ng john hashcat hydra
+sqlmap nikto gobuster dirb
+steghide libimage-exiftool-perl binwalk
+gdb strace ltrace

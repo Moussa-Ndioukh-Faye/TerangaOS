@@ -1,0 +1,42 @@
+#!/bin/bash
+# TérangaOS — pile IA (variante full)
+# - Ollama (LLM local) via l'installateur officiel
+# - PyTorch (CPU), Jupyter, Transformers, LangChain… dans un environnement
+#   virtuel /opt/terangaos/ai, pour ne pas casser le Python du système.
+# Les échecs sont signalés mais ne bloquent pas la construction de l'ISO.
+set -uo pipefail
+
+echo "[TERANGA] Hook 0500 : pile IA"
+
+# --- Ollama ------------------------------------------------------------------
+# Dans un chroot, systemd ne tourne pas : l'installateur peut échouer à la
+# fin en voulant démarrer le service, on vérifie donc le binaire ensuite.
+curl -fsSL https://ollama.com/install.sh | sh || true
+if command -v ollama >/dev/null 2>&1; then
+    systemctl enable ollama 2>/dev/null || true
+    echo "[OK] Ollama installé (les modèles se téléchargent après démarrage : ollama pull llama3.1)"
+else
+    echo "[WARN] Ollama non installé"
+fi
+
+# --- Environnement Python IA --------------------------------------------------
+AI_ENV=/opt/terangaos/ai
+if python3 -m venv --system-site-packages "$AI_ENV" \
+   && "$AI_ENV/bin/pip" install --no-cache-dir --upgrade pip \
+   && "$AI_ENV/bin/pip" install --no-cache-dir \
+        --index-url https://download.pytorch.org/whl/cpu torch torchvision torchaudio \
+   && "$AI_ENV/bin/pip" install --no-cache-dir \
+        jupyterlab transformers huggingface-hub accelerate \
+        langchain langchain-community \
+        streamlit gradio openai anthropic \
+        pymupdf faiss-cpu; then
+    cat > /etc/profile.d/terangaos-ai.sh <<'EOF'
+# Outils IA de TérangaOS (jupyter-lab, streamlit…) disponibles dans le PATH
+case ":$PATH:" in *":/opt/terangaos/ai/bin:"*) ;; *) PATH="$PATH:/opt/terangaos/ai/bin" ;; esac
+EOF
+    echo "[OK] Pile IA installée dans $AI_ENV"
+else
+    echo "[WARN] Pile IA Python incomplète, voir le journal du build"
+fi
+
+exit 0

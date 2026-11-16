@@ -1,0 +1,60 @@
+#!/bin/bash
+# TérangaOS — personnalisation de l'installateur Calamares
+# Part du branding Debian fourni par calamares-settings-debian (images et
+# diaporama existants) et remplace seulement les textes et les couleurs.
+set -euo pipefail
+
+echo "[TERANGA] Hook 0300 : Calamares"
+
+if [ ! -f /etc/calamares/settings.conf ] || [ ! -d /etc/calamares/branding/debian ]; then
+    echo "[WARN] Calamares absent : personnalisation ignorée"
+    exit 0
+fi
+
+BRAND=/etc/calamares/branding/terangaos
+rm -rf "$BRAND"
+cp -a /etc/calamares/branding/debian "$BRAND"
+
+sed -i \
+    -e 's/^\(\s*componentName:\s*\).*/\1terangaos/' \
+    -e 's/^\(\s*productName:\s*\).*/\1TérangaOS/' \
+    -e 's/^\(\s*shortProductName:\s*\).*/\1Téranga/' \
+    -e 's/^\(\s*version:\s*\).*/\11.0/' \
+    -e 's/^\(\s*shortVersion:\s*\).*/\11.0/' \
+    -e 's/^\(\s*versionedName:\s*\).*/\1TérangaOS 1.0 "Djolof"/' \
+    -e 's/^\(\s*shortVersionedName:\s*\).*/\1TérangaOS 1.0/' \
+    -e 's/^\(\s*bootloaderEntryName:\s*\).*/\1TerangaOS/' \
+    -e 's/^\(\s*productUrl:\s*\).*/\1https:\/\/github.com\/Moussa-Ndioukh-Faye\/TerangaOS/' \
+    -e 's/^\(\s*supportUrl:\s*\).*/\1https:\/\/github.com\/Moussa-Ndioukh-Faye\/TerangaOS\/issues/' \
+    -e 's/^\(\s*sidebarBackground:\s*\).*/\1"#0A0702"/' \
+    -e 's/^\(\s*sidebarText:\s*\).*/\1"#F5EDD8"/' \
+    -e 's/^\(\s*sidebarTextSelect:\s*\).*/\1"#FFBE00"/' \
+    -e 's/^\(\s*sidebarTextHighlight:\s*\).*/\1"#C85200"/' \
+    "$BRAND/branding.desc"
+
+sed -i 's/^branding:.*/branding: terangaos/' /etc/calamares/settings.conf
+
+# Shell zsh pour l'utilisateur créé à l'installation
+if [ -f /etc/calamares/modules/users.conf ]; then
+    if grep -q '^userShell:' /etc/calamares/modules/users.conf; then
+        sed -i 's|^userShell:.*|userShell: /bin/zsh|' /etc/calamares/modules/users.conf
+    else
+        echo 'userShell: /bin/zsh' >> /etc/calamares/modules/users.conf
+    fi
+fi
+
+# Lanceur "Installer TérangaOS" (menu des applications et dock GNOME)
+LAUNCHER=calamares
+command -v install-debian >/dev/null 2>&1 && LAUNCHER=install-debian
+cat > /usr/share/applications/install-terangaos.desktop <<EOF
+[Desktop Entry]
+Type=Application
+Name=Installer TérangaOS
+Comment=Installer TérangaOS sur le disque
+Exec=$LAUNCHER
+Icon=calamares
+Terminal=false
+Categories=System;
+EOF
+
+echo "[OK] Calamares personnalisé"

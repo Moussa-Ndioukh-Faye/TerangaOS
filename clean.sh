@@ -1,23 +1,19 @@
 #!/bin/bash
-# TérangaOS — Script de nettoyage complet
-set -e
+# TérangaOS — supprime les dossiers de build (cache des paquets compris)
+# Usage : sudo ./clean.sh           (toutes les variantes)
+#         sudo ./clean.sh core      (une seule variante)
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")"
 
-echo "[TERANGA] Nettoyage en cours..."
-
-# Nettoyage live-build
-if [ -d "live-build-config" ]; then
-    cd live-build-config
-    sudo lb clean --purge
-    cd ..
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Lancez avec sudo : les fichiers de build appartiennent à root." >&2
+    exit 1
 fi
 
-# Nettoyage des fichiers ISO et logs
-rm -f *.iso *.sha256 *.log
-rm -f wget-log*
-
-# Nettoyage des répertoires de build manuels
-rm -rf build/
-rm -rf chroot/
-rm -rf binary/
-
-echo "[TERANGA] ✓ Nettoyage terminé. Prêt pour un build propre."
+if [ $# -gt 0 ]; then variants=("$@"); else variants=(core cyber full); fi
+for v in "${variants[@]}"; do
+    ./build.sh clean --variant "$v"
+done
+rm -f build/*.iso build/*.sha256 build/*.asc build/*.log
+rmdir build 2>/dev/null || true
+echo "[TERANGA] Nettoyage terminé."

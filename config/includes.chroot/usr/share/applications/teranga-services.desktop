@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Services Sénégal
+Comment=Accès rapide aux services publics et locaux
+Exec=teranga-services
+Icon=network-transmit-receive
+Terminal=false
+Categories=Utility;

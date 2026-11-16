@@ -1,31 +1,41 @@
-# Build artifacts
-*.o
-*.a
-*.so
-*.ko
-*.deb
-*.rpm
+# Builds (dossier de travail live-build, ISO, journaux)
+build/
+live-build-config/
 *.iso
-*.img
-
-# Logs
+*.sha256
+*.asc
 *.log
 
-# Temp files
+# Sources tierces : ne pas les ajouter au dépôt (gigaoctets inutiles)
+/busybox/
+/alsa-utils/
+/glibc/
+/gcc-master/
+/linux-master/
+/poky/
+/grub/
+/grub-*/
+/openssl/
+/zlib/
+/coreutils/
+/util-linux/
+/xserver/
+/wayland/
+/wayland-protocols/
+/pipewire/
+/sddm/
+/live-build/
+/live-boot/
+/themer/
+/rootfs/
+
+# Fichiers temporaires
 *.tmp
 *.swp
 *~
 
-# Build directories
-rootfs/
-chroot/
-build/
-dist/
-
-# IDE
+# Éditeurs / OS
 .vscode/
 .idea/
-
-# OS
 .DS_Store
 Thumbs.db

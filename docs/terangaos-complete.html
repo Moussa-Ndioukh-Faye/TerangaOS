@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TérangaOS — Guide de Construction Complet</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Syne:wght@400;600;700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#FFBE00;--gold2:#C89000;--terra:#C85200;--ember:#FF7A30;
+  --bg:#0a0702;--bg2:#120e06;--bg3:#1c1608;--bg4:#221a08;
+  --cream:#F5EDD8;--muted:rgba(245,237,216,.4);--border:rgba(255,190,0,.1);
+  --green:#4FFFAA;--blue:#7EC8FF;--red:#FF6B6B;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--cream);font-family:'Syne',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--gold2);border-radius:2px}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(10,7,2,.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);padding:.9rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem}
+.nav-brand{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:var(--gold)}
+.nav-tabs{display:flex;gap:.3rem;flex-wrap:wrap}
+.tab-btn{background:none;border:1px solid transparent;color:var(--muted);padding:.35rem .9rem;
+  border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;transition:all .2s}
+.tab-btn:hover,.tab-btn.active{background:rgba(255,190,0,.08);border-color:rgba(255,190,0,.2);color:var(--gold)}
+
+/* PAGES */
+.page{display:none;animation:fadeIn .3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{
+  min-height:40vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:4rem 2rem 3rem;position:relative;overflow:hidden;
+}
+.hero-bg{position:absolute;inset:0;opacity:.05}
+.hero-bg svg{width:100%;height:100%}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,8vw,5.5rem);font-weight:900;
+  color:var(--gold);line-height:.95;position:relative}
+.hero-title em{font-style:italic;color:var(--cream)}
+.hero-sub{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--terra);
+  letter-spacing:.2em;text-transform:uppercase;margin-top:.5rem}
+.hero-desc{font-size:.85rem;color:var(--muted);max-width:500px;line-height:1.7;margin-top:1rem}
+
+/* CONTAINERS */
+.container{max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem}
+.section-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;
+  color:var(--cream);margin-bottom:.4rem}
+.section-title span{color:var(--gold)}
+.section-sub{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);
+  letter-spacing:.2em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:.6rem}
+.section-sub::before{content:'';display:block;width:24px;height:1px;background:var(--gold2);opacity:.5}
+
+/* CODE BLOCKS */
+.code-block{position:relative;background:#000;border:1px solid rgba(255,190,0,.15);
+  border-radius:10px;overflow:hidden;margin:.8rem 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem 1rem;background:rgba(255,190,0,.05);border-bottom:1px solid rgba(255,190,0,.1)}
+.code-file{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--gold);letter-spacing:.1em}
+.code-lang{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);
+  padding:.15rem .5rem;background:rgba(255,255,255,.05);border-radius:4px}
+.copy-btn{background:rgba(255,190,0,.08);border:1px solid rgba(255,190,0,.2);color:var(--gold);
+  padding:.2rem .6rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.55rem;
+  cursor:pointer;transition:all .2s;letter-spacing:.05em}
+.copy-btn:hover{background:rgba(255,190,0,.15)}
+.copy-btn.copied{background:rgba(79,255,170,.1);border-color:rgba(79,255,170,.3);color:var(--green)}
+pre{padding:1.2rem;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.7}
+.c-gold{color:var(--gold)} .c-green{color:var(--green)} .c-blue{color:var(--blue)}
+.c-red{color:var(--red)} .c-muted{color:var(--muted)} .c-ember{color:var(--ember)}
+.c-white{color:#fff}
+
+/* CARDS */
+.grid-2{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  transition:border-color .2s,transform .2s}
+.card:hover{border-color:rgba(255,190,0,.25);transform:translateY(-2px)}
+.card-head{padding:1.2rem 1.5rem 1rem;border-bottom:1px solid var(--border)}
+.card-icon{font-size:1.5rem;margin-bottom:.5rem}
+.card-title{font-weight:700;font-size:.95rem;color:var(--cream)}
+.card-sub{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted);
+  letter-spacing:.08em;margin-top:.2rem}
+.card-body{padding:1rem 1.5rem 1.2rem}
+.item-row{display:flex;align-items:center;justify-content:space-between;
+  padding:.35rem .5rem;border-radius:5px;border:1px solid transparent;
+  transition:background .15s,border-color .15s}
+.item-row:hover{background:rgba(255,190,0,.05);border-color:rgba(255,190,0,.08)}
+.item-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--cream)}
+.item-desc{font-size:.6rem;color:var(--muted)}
+.tag{font-family:'JetBrains Mono',monospace;font-size:.5rem;padding:.15rem .45rem;
+  border-radius:3px;white-space:nowrap;letter-spacing:.05em}
+.tag-sec{background:rgba(255,107,107,.1);color:var(--red);border:1px solid rgba(255,107,107,.15)}
+.tag-dev{background:rgba(255,190,0,.1);color:var(--gold);border:1px solid rgba(255,190,0,.15)}
+.tag-ai{background:rgba(126,200,255,.1);color:var(--blue);border:1px solid rgba(126,200,255,.15)}
+.tag-ui{background:rgba(79,255,170,.1);color:var(--green);border:1px solid rgba(79,255,170,.15)}
+.tag-base{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.08)}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:1.2rem}
+.step{display:flex;gap:1.2rem;align-items:flex-start}
+.step-num{width:36px;height:36px;border-radius:50%;border:1px solid var(--gold2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:600;color:var(--gold);
+  background:var(--bg3)}
+.step-body{flex:1}
+.step-title{font-weight:700;color:var(--cream);font-size:.9rem;margin-bottom:.3rem}
+.step-desc{font-size:.78rem;color:var(--muted);line-height:1.65}
+
+/* ARCH DIAGRAM */
+.arch-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;
+  padding:2rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:2.2}
+.arch-layer{display:flex;align-items:center;gap:1rem;padding:.4rem .8rem;
+  border-radius:6px;margin:.2rem 0}
+.al-hardware{background:rgba(255,107,107,.06);border:1px solid rgba(255,107,107,.12);color:var(--red)}
+.al-kernel{background:rgba(255,190,0,.06);border:1px solid rgba(255,190,0,.12);color:var(--gold)}
+.al-init{background:rgba(200,82,0,.06);border:1px solid rgba(200,82,0,.12);color:var(--ember)}
+.al-wayland{background:rgba(79,255,170,.06);border:1px solid rgba(79,255,170,.12);color:var(--green)}
+.al-hyprland{background:rgba(126,200,255,.06);border:1px solid rgba(126,200,255,.12);color:var(--blue)}
+.al-apps{background:rgba(255,190,0,.04);border:1px solid rgba(255,190,0,.08);color:var(--muted)}
+.arch-arrow{color:rgba(255,255,255,.15);font-size:.8rem;margin:0 auto;text-align:center;
+  letter-spacing:.5em}
+
+/* MOCKUP HYPRLAND */
+.hypr-mock{background:#0a0702;border:1px solid rgba(255,190,0,.15);border-radius:12px;overflow:hidden}
+.hypr-bar{display:flex;align-items:center;justify-content:space-between;
+  padding:.4rem 1rem;background:rgba(255,190,0,.05);
+  border-bottom:1px solid rgba(255,190,0,.08);font-family:'JetBrains Mono',monospace;font-size:.58rem}
+.hypr-workspaces{display:flex;gap:.3rem}
+.ws{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:.5rem;border:1px solid rgba(255,190,0,.15);color:var(--muted)}
+.ws.active{background:rgba(255,190,0,.15);border-color:rgba(255,190,0,.4);color:var(--gold)}
+.hypr-clock{color:var(--gold)}
+.hypr-tray{color:var(--muted);display:flex;gap:.5rem}
+.hypr-content{height:200px;position:relative;
+  background:radial-gradient(ellipse at 25% 70%,rgba(200,82,0,.18),transparent 55%),
+             radial-gradient(ellipse at 75% 30%,rgba(255,190,0,.08),transparent 55%),
+             #080502}
+.hypr-terminal{position:absolute;top:20px;left:20px;width:55%;
+  background:rgba(0,0,0,.85);border:1px solid rgba(255,190,0,.2);border-radius:8px;overflow:hidden;
+  backdrop-filter:blur(10px)}
+.term-bar{padding:.3rem .6rem;background:rgba(255,190,0,.06);
+  border-bottom:1px solid rgba(255,190,0,.1);
+  display:flex;align-items:center;gap:.4rem;font-family:'JetBrains Mono',monospace;font-size:.5rem}
+.term-dot{width:7px;height:7px;border-radius:50%}
+.term-content{padding:.6rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.55rem;line-height:1.8}
+.hypr-panel{position:absolute;top:20px;right:20px;width:38%;
+  background:rgba(10,7,2,.9);border:1px solid rgba(255,190,0,.15);border-radius:8px;
+  padding:.8rem;backdrop-filter:blur(10px)}
+.panel-title{font-family:'Playfair Display',serif;font-size:.75rem;font-weight:700;color:var(--gold);margin-bottom:.5rem}
+.panel-item{display:flex;align-items:center;gap:.4rem;font-family:'JetBrains Mono',monospace;
+  font-size:.5rem;color:var(--muted);padding:.2rem 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.hypr-dock{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  display:flex;gap:.4rem;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,190,0,.1);border-radius:10px;padding:.4rem .6rem}
+.dock-i{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;background:rgba(255,190,0,.07);border:1px solid rgba(255,190,0,.1);
+  transition:transform .15s}
+.dock-i:hover{transform:translateY(-4px) scale(1.15)}
+
+/* ALERTS */
+.alert{display:flex;gap:.8rem;padding:.9rem 1.2rem;border-radius:8px;margin:.8rem 0;
+  font-size:.78rem;line-height:1.6;align-items:flex-start}
+.alert-warn{background:rgba(255,190,0,.07);border:1px solid rgba(255,190,0,.2);color:var(--cream)}
+.alert-info{background:rgba(126,200,255,.07);border:1px solid rgba(126,200,255,.2);color:var(--cream)}
+.alert-ok{background:rgba(79,255,170,.07);border:1px solid rgba(79,255,170,.2);color:var(--cream)}
+.alert-icon{font-size:1rem;flex-shrink:0;margin-top:.1rem}
+
+/* PROGRESS TRACK */
+.progress-track{margin:2rem 0}
+.progress-phase{display:flex;gap:1rem;margin-bottom:1.5rem;align-items:flex-start}
+.ph-num{width:32px;height:32px;border-radius:8px;flex-shrink:0;background:var(--bg4);
+  border:1px solid var(--gold2);display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:600;color:var(--gold)}
+.ph-content{flex:1}
+.ph-title{font-weight:700;color:var(--cream);font-size:.88rem;margin-bottom:.2rem}
+.ph-desc{font-size:.72rem;color:var(--muted);line-height:1.6}
+.ph-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
+.ph-tag{font-family:'JetBrains Mono',monospace;font-size:.52rem;padding:.18rem .5rem;
+  background:rgba(255,190,0,.07);color:var(--gold2);border:1px solid rgba(255,190,0,.12);border-radius:3px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.73rem;margin:1rem 0}
+th{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);border-bottom:1px solid var(--border);padding:.7rem .8rem;text-align:left}
+td{padding:.65rem .8rem;border-bottom:1px solid rgba(255,190,0,.05);color:var(--cream);vertical-align:top}
+tr:hover td{background:rgba(255,190,0,.03)}
+.status-ok{color:var(--green);font-size:.7rem}
+.status-warn{color:var(--gold);font-size:.7rem}
+.status-miss{color:var(--red);font-size:.7rem}
+
+/* WALLPAPER PREVIEW */
+.wp-preview{height:160px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,190,0,.15);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem;
+  background:
+    radial-gradient(ellipse at 20% 80%,rgba(200,82,0,.3),transparent 50%),
+    radial-gradient(ellipse at 80% 20%,rgba(255,190,0,.15),transparent 50%),
+    radial-gradient(ellipse at 50% 50%,rgba(10,7,2,.5),transparent 70%),
+    #080502}
+.wp-logo{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;
+  color:rgba(255,190,0,.8);text-shadow:0 0 40px rgba(255,190,0,.3)}
+.wp-tagline{font-family:'JetBrains Mono',monospace;font-size:.55rem;
+  color:rgba(245,237,216,.3);letter-spacing:.25em;text-transform:uppercase}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  nav{padding:.8rem 1rem}
+  .container{padding:2rem 1rem}
+  pre{font-size:.58rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Téranga<span style="color:var(--cream)">OS</span></div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showPage('overview')">Vue d'ensemble</button>
+    <button class="tab-btn" onclick="showPage('architecture')">Architecture</button>
+    <button class="tab-btn" onclick="showPage('build')">Build Scripts</button>
+    <button class="tab-btn" onclick="showPage('hyprland')">Hyprland</button>
+    <button class="tab-btn" onclick="showPage('theme')">Thème</button>
+    <button class="tab-btn" onclick="showPage('windows')">Guide Windows</button>
+  </div>
+</nav>
+
+<!-- ═══════════════ PAGE 1 : OVERVIEW ═══════════════ -->
+<div id="page-overview" class="page active">
+  <div class="hero">
+    <div class="hero-bg">
+      <svg viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <pattern id="k" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="15" x2="60" y2="15" stroke="#FFBE00" stroke-width=".8"/>
+            <line x1="0" y1="45" x2="60" y2="45" stroke="#C85200" stroke-width=".5"/>
+            <line x1="15" y1="0" x2="15" y2="60" stroke="#FFBE00" stroke-width=".5"/>
+            <line x1="45" y1="0" x2="45" y2="60" stroke="#C85200" stroke-width=".8"/>
+          </pattern>
+        </defs>
+        <rect width="1200" height="500" fill="url(#k)"/>
+      </svg>
+    </div>
+    <h1 class="hero-title">Téranga<em>OS</em></h1>
+    <p class="hero-sub">GNU/Linux · Hyprland · Cybersec · Dev · AI</p>
+    <p class="hero-desc">Distribution Linux complète basée sur Debian 12 Bookworm avec Hyprland comme environnement graphique. Construite depuis Windows via WSL2.</p>
+  </div>
+
+  <div class="container">
+    <p class="section-sub">Vue d'ensemble du système</p>
+    <h2 class="section-title">Qu'est-ce que <span>TérangaOS</span> ?</h2>
+
+    <div class="alert alert-ok">
+      <span class="alert-icon">✅</span>
+      <div><strong>Choix technique retenu :</strong> Debian 12 Bookworm + Hyprland (Wayland) + Waybar + Kitty + Wofi. Build via <code style="color:var(--gold)">live-build</code> depuis WSL2 sur Windows.</div>
+    </div>
+
+    <!-- MOCKUP HYPRLAND -->
+    <div class="hypr-mock" style="margin:1.5rem 0">
+      <div class="hypr-bar">
+        <div style="display:flex;align-items:center;gap:.8rem">
+          <span style="font-family:'Playfair Display',serif;color:var(--gold);font-weight:900;font-size:.75rem">TérangaOS</span>
+          <div class="hypr-workspaces">
+            <div class="ws active">1</div>
+            <div class="ws">2</div>
+            <div class="ws">3</div>
+            <div class="ws">4</div>
+            <div class="ws">5</div>
+          </div>
+        </div>
+        <div class="hypr-clock">Jeu 10 Avr · 10:42</div>
+        <div class="hypr-tray">
+          <span>🔒</span><span>⚡</span><span>🤖</span>
+          <span style="color:var(--green)">▲</span>
+          <span>🔋 97%</span>
+        </div>
+      </div>
+      <div class="hypr-content">
+        <div class="hypr-terminal">
+          <div class="term-bar">
+            <div class="term-dot" style="background:#ff5f57"></div>
+            <div class="term-dot" style="background:#febc2e"></div>
+            <div class="term-dot" style="background:#28c840"></div>
+            <span style="margin-left:.3rem;color:var(--muted)">kitty — teranga@terangaos</span>
+          </div>
+          <div class="term-content">
+            <div><span style="color:var(--gold)">teranga</span><span style="color:var(--muted)">@</span><span style="color:var(--green)">terangaos</span><span style="color:var(--muted)"> ~/Desktop </span><span style="color:var(--blue)">❯</span></div>
+            <div style="color:var(--muted)">ollama run llama3.1</div>
+            <div style="color:var(--green)">>>> Sending request...</div>
+            <div style="color:var(--cream)">Assalamu alaikum! Je suis TérangaAI,</div>
+            <div style="color:var(--cream)">prêt à vous aider. 🌍</div>
+          </div>
+        </div>
+        <div class="hypr-panel">
+          <div class="panel-title">Système</div>
+          <div class="panel-item"><span style="color:var(--gold)">OS</span><span>TérangaOS 1.0</span></div>
+          <div class="panel-item"><span style="color:var(--gold)">WM</span><span>Hyprland 0.41</span></div>
+          <div class="panel-item"><span style="color:var(--gold)">CPU</span><span>23% · 4 cores</span></div>
+          <div class="panel-item"><span style="color:var(--gold)">RAM</span><span>3.2 / 16 GB</span></div>
+          <div class="panel-item"><span style="color:var(--gold)">Ollama</span><span style="color:var(--green)">● actif</span></div>
+        </div>
+        <div class="hypr-dock">
+          <div class="dock-i" title="Kitty">⌨</div>
+          <div class="dock-i" title="Firefox">🌐</div>
+          <div class="dock-i" title="VS Code">📝</div>
+          <div class="dock-i" title="Wireshark">📡</div>
+          <div class="dock-i" title="Metasploit">🎯</div>
+          <div class="dock-i" title="Ollama UI">🤖</div>
+          <div class="dock-i" title="Thunar">📁</div>
+          <div class="dock-i" title="Paramètres">⚙</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:1.5rem">
+      <div class="card">
+        <div class="card-head"><div class="card-icon">🖥️</div>
+          <div class="card-title">Stack Graphique</div>
+          <div class="card-sub">// Wayland · Hyprland · Waybar</div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:.4rem">
+          <div class="item-row"><span class="item-name">Hyprland</span><span class="tag tag-ui">compositor</span></div>
+          <div class="item-row"><span class="item-name">Waybar</span><span class="tag tag-ui">barre de statut</span></div>
+          <div class="item-row"><span class="item-name">Wofi</span><span class="tag tag-ui">launcher</span></div>
+          <div class="item-row"><span class="item-name">Kitty</span><span class="tag tag-ui">terminal</span></div>
+          <div class="item-row"><span class="item-name">SDDM</span><span class="tag tag-ui">login manager</span></div>
+          <div class="item-row"><span class="item-name">Hyprpaper</span><span class="tag tag-ui">wallpaper</span></div>
+          <div class="item-row"><span class="item-name">Mako</span><span class="tag tag-ui">notifications</span></div>
+          <div class="item-row"><span class="item-name">Thunar</span><span class="tag tag-ui">fichiers</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-icon">⚙️</div>
+          <div class="card-title">Stack Système</div>
+          <div class="card-sub">// Base · Init · Audio · Réseau</div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:.4rem">
+          <div class="item-row"><span class="item-name">Debian 12 Bookworm</span><span class="tag tag-base">base</span></div>
+          <div class="item-row"><span class="item-name">Kernel 6.8 LTS</span><span class="tag tag-base">noyau</span></div>
+          <div class="item-row"><span class="item-name">systemd</span><span class="tag tag-base">init</span></div>
+          <div class="item-row"><span class="item-name">Pipewire + WirePlumber</span><span class="tag tag-base">audio</span></div>
+          <div class="item-row"><span class="item-name">NetworkManager</span><span class="tag tag-base">réseau</span></div>
+          <div class="item-row"><span class="item-name">Polkit</span><span class="tag tag-base">permissions</span></div>
+          <div class="item-row"><span class="item-name">glibc 2.37</span><span class="tag tag-base">libc</span></div>
+          <div class="item-row"><span class="item-name">OpenRC compatible</span><span class="tag tag-base">optionnel</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3" style="margin-top:1rem">
+      <div class="card">
+        <div class="card-head"><div class="card-icon">🔒</div>
+          <div class="card-title">Cybersécurité</div>
+          <div class="card-sub">// 10 outils clés</div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:.3rem">
+          <div class="item-row"><span class="item-name">nmap</span><span class="tag tag-sec">scan</span></div>
+          <div class="item-row"><span class="item-name">Metasploit</span><span class="tag tag-sec">exploit</span></div>
+          <div class="item-row"><span class="item-name">Wireshark</span><span class="tag tag-sec">réseau</span></div>
+          <div class="item-row"><span class="item-name">Burp Suite CE</span><span class="tag tag-sec">web</span></div>
+          <div class="item-row"><span class="item-name">Aircrack-ng</span><span class="tag tag-sec">wifi</span></div>
+          <div class="item-row"><span class="item-name">Hashcat</span><span class="tag tag-sec">crypto</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-icon">⚡</div>
+          <div class="card-title">Développement</div>
+          <div class="card-sub">// Full-stack · DevOps</div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:.3rem">
+          <div class="item-row"><span class="item-name">VS Code</span><span class="tag tag-dev">éditeur</span></div>
+          <div class="item-row"><span class="item-name">Python 3.12</span><span class="tag tag-dev">lang</span></div>
+          <div class="item-row"><span class="item-name">Node.js 20</span><span class="tag tag-dev">runtime</span></div>
+          <div class="item-row"><span class="item-name">Rust</span><span class="tag tag-dev">lang</span></div>
+          <div class="item-row"><span class="item-name">Docker</span><span class="tag tag-dev">containers</span></div>
+          <div class="item-row"><span class="item-name">Git + GitHub CLI</span><span class="tag tag-dev">vcs</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-icon">🤖</div>
+          <div class="card-title">Intelligence Artificielle</div>
+          <div class="card-sub">// LLM local · ML · GPU</div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:.3rem">
+          <div class="item-row"><span class="item-name">Ollama</span><span class="tag tag-ai">llm local</span></div>
+          <div class="item-row"><span class="item-name">Open WebUI</span><span class="tag tag-ai">chat ui</span></div>
+          <div class="item-row"><span class="item-name">Jupyter Lab</span><span class="tag tag-ai">notebook</span></div>
+          <div class="item-row"><span class="item-name">PyTorch</span><span class="tag tag-ai">deep learning</span></div>
+          <div class="item-row"><span class="item-name">LangChain</span><span class="tag tag-ai">pipelines</span></div>
+          <div class="item-row"><span class="item-name">Whisper</span><span class="tag tag-ai">speech</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE 2 : ARCHITECTURE ═══════════════ -->
+<div id="page-architecture" class="page">
+  <div class="container">
+    <p class="section-sub">Architecture technique complète</p>
+    <h2 class="section-title">Stack <span>TérangaOS</span></h2>
+
+    <div class="arch-box">
+      <div class="arch-layer al-apps">
+        <span>📦 APPLICATIONS :</span>
+        <span>Firefox · VS Code · Kitty · Thunar · Wireshark · Metasploit · Ollama · Jupyter · Burp Suite</span>
+      </div>
+      <div class="arch-arrow">↑↓</div>
+      <div class="arch-layer al-hyprland">
+        <span>🪟 HYPRLAND 0.41 :</span>
+        <span>Compositor Wayland · Tiling dynamique · Animations · Waybar · Wofi · Mako · Hyprpaper · Hyprlock</span>
+      </div>
+      <div class="arch-arrow">↑↓</div>
+      <div class="arch-layer al-wayland">
+        <span>🌊 WAYLAND / PIPEWIRE :</span>
+        <span>wayland-protocols · xwayland (compat X11) · Pipewire 1.0 · WirePlumber · NetworkManager</span>
+      </div>
+      <div class="arch-arrow">↑↓</div>
+      <div class="arch-layer al-init">
+        <span>⚙️ SYSTEMD + SDDM :</span>
+        <span>systemd 254 · SDDM (login manager) · Polkit · D-Bus · udev · logind</span>
+      </div>
+      <div class="arch-arrow">↑↓</div>
+      <div class="arch-layer al-kernel">
+        <span>🐧 KERNEL 6.8 LTS :</span>
+        <span>Linux 6.8 · glibc 2.37 · busybox · coreutils · util-linux · bash 5.2 · openssl 3.x</span>
+      </div>
+      <div class="arch-arrow">↑↓</div>
+      <div class="arch-layer al-hardware">
+        <span>💻 HARDWARE :</span>
+        <span>CPU amd64/x86_64 · GPU (Mesa DRM/KMS) · RAM · Storage (ext4) · Network · USB</span>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;color:var(--cream);margin:2rem 0 1rem">Structure du projet</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">terangaos/ — arborescence complète</span>
+        <span class="code-lang">tree</span>
+      </div>
+      <pre><span class="c-gold">terangaos/</span>
+├── <span class="c-blue">build.sh</span>                        <span class="c-muted"># Script de build principal</span>
+├── <span class="c-blue">clean.sh</span>                        <span class="c-muted"># Nettoyage du build</span>
+├── <span class="c-gold">config/</span>
+│   ├── <span class="c-green">package-lists/</span>
+│   │   ├── base.list.chroot            <span class="c-muted"># Paquets système de base</span>
+│   │   ├── desktop.list.chroot         <span class="c-muted"># Hyprland + Waybar + outils graphiques</span>
+│   │   ├── cybersec.list.chroot        <span class="c-muted"># Outils de sécurité</span>
+│   │   ├── dev.list.chroot             <span class="c-muted"># Outils de développement</span>
+│   │   └── ai.list.chroot              <span class="c-muted"># Outils IA (Python, Jupyter...)</span>
+│   ├── <span class="c-green">hooks/</span>
+│   │   ├── live/
+│   │   │   ├── 0001-base-config.hook.chroot
+│   │   │   ├── 0002-hyprland-build.hook.chroot  <span class="c-muted"># Compile Hyprland depuis source</span>
+│   │   │   ├── 0003-ollama-install.hook.chroot
+│   │   │   ├── 0004-branding.hook.chroot
+│   │   │   └── 0005-users-setup.hook.chroot
+│   ├── <span class="c-green">includes.chroot/</span>
+│   │   ├── etc/
+│   │   │   ├── os-release                       <span class="c-muted"># Identité TérangaOS</span>
+│   │   │   ├── hostname
+│   │   │   ├── hosts
+│   │   │   └── sddm.conf                        <span class="c-muted"># Config login manager</span>
+│   │   ├── home/teranga/
+│   │   │   └── .config/
+│   │   │       ├── hypr/
+│   │   │       │   ├── hyprland.conf            <span class="c-muted"># Config principale Hyprland</span>
+│   │   │       │   ├── hyprpaper.conf           <span class="c-muted"># Wallpaper TérangaOS</span>
+│   │   │       │   └── hyprlock.conf            <span class="c-muted"># Écran de verrouillage</span>
+│   │   │       ├── waybar/
+│   │   │       │   ├── config.jsonc             <span class="c-muted"># Config barre de statut</span>
+│   │   │       │   └── style.css                <span class="c-muted"># Thème or/sombre</span>
+│   │   │       ├── kitty/
+│   │   │       │   └── kitty.conf               <span class="c-muted"># Terminal thémé TérangaOS</span>
+│   │   │       ├── wofi/
+│   │   │       │   ├── config
+│   │   │       │   └── style.css
+│   │   │       └── mako/
+│   │   │           └── config                   <span class="c-muted"># Notifications</span>
+│   │   └── usr/share/
+│   │       ├── backgrounds/terangaos/           <span class="c-muted"># Wallpapers</span>
+│   │       └── grub/themes/terangaos/           <span class="c-muted"># Thème GRUB</span>
+└── <span class="c-gold">output/</span>
+    └── terangaos-1.0-amd64.iso               <span class="c-muted"># ISO finale (~4.5 Go)</span></pre>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;color:var(--cream);margin:2rem 0 1rem">Pourquoi Hyprland ?</h3>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div><strong>Hyprland</strong> est un compositeur Wayland moderne avec tiling dynamique, animations fluides et forte personnalisation. Il n'est pas dans les dépôts Debian 12 — on le compile depuis les sources via un hook live-build. C'est ce qui rendra TérangaOS unique.</div>
+    </div>
+
+    <table>
+      <thead><tr><th>Composant</th><th>Rôle</th><th>Source</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Hyprland</td><td>Compositeur Wayland tiling</td><td>github.com/hyprwm/Hyprland</td><td><span class="status-warn">⚡ Compile from source</span></td></tr>
+        <tr><td>Waybar</td><td>Barre de statut Wayland</td><td>APT backports</td><td><span class="status-ok">✅ APT</span></td></tr>
+        <tr><td>Wofi</td><td>Launcher d'applications</td><td>APT Debian 12</td><td><span class="status-ok">✅ APT</span></td></tr>
+        <tr><td>Kitty</td><td>Terminal GPU-accéléré</td><td>APT Debian 12</td><td><span class="status-ok">✅ APT</span></td></tr>
+        <tr><td>SDDM</td><td>Display manager (login)</td><td>APT Debian 12</td><td><span class="status-ok">✅ APT</span></td></tr>
+        <tr><td>Hyprpaper</td><td>Gestionnaire de fond d'écran</td><td>github.com/hyprwm/hyprpaper</td><td><span class="status-warn">⚡ Compile from source</span></td></tr>
+        <tr><td>Hyprlock</td><td>Écran de verrouillage</td><td>github.com/hyprwm/hyprlock</td><td><span class="status-warn">⚡ Compile from source</span></td></tr>
+        <tr><td>Mako</td><td>Daemon de notifications</td><td>APT Debian 12</td><td><span class="status-ok">✅ APT</span></td></tr>
+        <tr><td>Ollama</td><td>Runtime LLM local</td><td>curl installer</td><td><span class="status-ok">✅ Script</span></td></tr>
+        <tr><td>Metasploit</td><td>Framework pentest</td><td>curl installer</td><td><span class="status-ok">✅ Script</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE 3 : BUILD SCRIPTS ═══════════════ -->
+<div id="page-build" class="page">
+  <div class="container">
+    <p class="section-sub">Scripts de construction</p>
+    <h2 class="section-title">Build <span>complet</span></h2>
+
+    <!-- build.sh -->
+    <h3 style="color:var(--gold);font-size:1rem;margin:1.5rem 0 .5rem">📄 build.sh — Script principal</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">terangaos/build.sh</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        </div>
+      </div>
+      <pre><span class="c-muted">#!/bin/bash</span>
+<span class="c-muted">set -e</span>
+
+<span class="c-gold">echo</span> <span class="c-green">"╔══════════════════════════════════════════╗"</span>
+<span class="c-gold">echo</span> <span class="c-green">"║   TérangaOS Build System v1.0            ║"</span>
+<span class="c-gold">echo</span> <span class="c-green">"║   Codename: Djolof · Base: Debian 12     ║"</span>
+<span class="c-gold">echo</span> <span class="c-green">"╚══════════════════════════════════════════╝"</span>
+
+<span class="c-muted"># ── 1. Vérification des dépendances ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[1/7] Vérification des dépendances..."</span>
+<span class="c-blue">for</span> tool <span class="c-blue">in</span> lb debootstrap git curl wget cmake ninja-build; <span class="c-blue">do</span>
+  command -v <span class="c-gold">$tool</span> &>/dev/null || {
+    <span class="c-gold">echo</span> <span class="c-red">"[ERREUR] Outil manquant: $tool"</span>
+    <span class="c-gold">echo</span> <span class="c-green">"Lancer: sudo apt install live-build debootstrap git curl wget cmake ninja-build"</span>
+    exit 1
+  }
+<span class="c-blue">done</span>
+<span class="c-gold">echo</span> <span class="c-green">"  ✓ Tous les outils présents"</span>
+
+<span class="c-muted"># ── 2. Nettoyage ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[2/7] Nettoyage du build précédent..."</span>
+sudo lb clean --purge 2>/dev/null || true
+
+<span class="c-muted"># ── 3. Configuration live-build ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[3/7] Configuration TérangaOS..."</span>
+lb config \
+  --distribution <span class="c-green">bookworm</span> \
+  --architecture <span class="c-green">amd64</span> \
+  --binary-images <span class="c-green">iso-hybrid</span> \
+  --debian-installer <span class="c-green">live</span> \
+  --locale <span class="c-green">fr_FR.UTF-8</span> \
+  --timezone <span class="c-green">Africa/Dakar</span> \
+  --hostname <span class="c-green">terangaos</span> \
+  --username <span class="c-green">teranga</span> \
+  --apt-recommends <span class="c-green">false</span> \
+  --linux-packages <span class="c-green">"linux-image linux-headers"</span> \
+  --bootappend-live <span class="c-green">"boot=live components locales=fr_FR.UTF-8 keyboard-layouts=fr"</span> \
+  --iso-volume <span class="c-green">"TérangaOS 1.0 Djolof"</span> \
+  --iso-publisher <span class="c-green">"ESP/UCAD Dakar — TérangaOS Project"</span>
+
+<span class="c-muted"># ── 4. Package Lists ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[4/7] Création des package lists..."</span>
+mkdir -p config/package-lists config/hooks/live config/includes.chroot/etc
+
+<span class="c-muted"># Base système</span>
+cat > config/package-lists/base.list.chroot <span class="c-green">&lt;&lt; 'EOF'
+systemd systemd-sysv dbus
+pipewire pipewire-audio pipewire-alsa wireplumber
+network-manager network-manager-gnome
+polkit polkit-gnome
+gvfs udisks2 udiskie
+xdg-utils xdg-user-dirs
+fonts-noto fonts-noto-cjk fonts-font-awesome
+curl wget git unzip tar gzip
+bash-completion zsh
+htop btop neofetch
+thunar thunar-volman
+firefox-esr
+EOF</span>
+
+<span class="c-muted"># Desktop Hyprland + Wayland</span>
+cat > config/package-lists/desktop.list.chroot <span class="c-green">&lt;&lt; 'EOF'
+wayland-utils xwayland
+waybar
+wofi
+kitty
+mako-notifier
+sddm
+qt5-wayland qt6-wayland
+grim slurp wl-clipboard
+swappy
+imv
+mpv
+pavucontrol
+blueman
+EOF</span>
+
+<span class="c-muted"># Cybersécurité</span>
+cat > config/package-lists/cybersec.list.chroot <span class="c-green">&lt;&lt; 'EOF'
+nmap
+wireshark
+aircrack-ng
+john
+hashcat
+tcpdump
+netcat-openbsd
+hydra
+sqlmap
+nikto
+gobuster
+dirb
+steghide
+exiftool
+binwalk
+gdb
+strace
+ltrace
+volatility3
+EOF</span>
+
+<span class="c-muted"># Développement</span>
+cat > config/package-lists/dev.list.chroot <span class="c-green">&lt;&lt; 'EOF'
+build-essential gcc g++ make cmake ninja-build
+python3 python3-pip python3-venv python3-dev
+nodejs npm
+rustup
+git git-lfs github-cli
+docker.io docker-compose
+code
+postman
+sqlite3
+postgresql-client
+redis-tools
+EOF</span>
+
+<span class="c-muted"># IA — les paquets pip sont installés via hook</span>
+cat > config/package-lists/ai.list.chroot <span class="c-green">&lt;&lt; 'EOF'
+python3-torch
+jupyter
+python3-sklearn
+python3-pandas
+python3-numpy
+python3-matplotlib
+EOF</span>
+
+<span class="c-muted"># ── 5. Hooks ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[5/7] Écriture des hooks..."</span>
+./scripts/write-hooks.sh
+
+<span class="c-muted"># ── 6. Configs Hyprland & thème ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[6/7] Injection des configs Hyprland..."</span>
+./scripts/inject-configs.sh
+
+<span class="c-muted"># ── 7. Build ISO ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[7/7] Construction de l'ISO (peut prendre 30-90 min)..."</span>
+sudo lb build 2>&1 | tee build.log
+
+<span class="c-muted"># ── Résultat ──</span>
+ISO_FILE=$(ls *.iso 2>/dev/null | head -1)
+<span class="c-blue">if</span> [ -n <span class="c-green">"$ISO_FILE"</span> ]; <span class="c-blue">then</span>
+  mv <span class="c-gold">"$ISO_FILE"</span> <span class="c-green">"terangaos-1.0-amd64.iso"</span>
+  sha256sum terangaos-1.0-amd64.iso > terangaos-1.0.sha256
+  <span class="c-gold">echo</span> <span class="c-green">""</span>
+  <span class="c-gold">echo</span> <span class="c-green">"╔══════════════════════════════════════════╗"</span>
+  <span class="c-gold">echo</span> <span class="c-green">"║  ✅ TérangaOS ISO générée avec succès!   ║"</span>
+  <span class="c-gold">echo</span> <span class="c-green">"║  → terangaos-1.0-amd64.iso              ║"</span>
+  <span class="c-gold">echo</span> <span class="c-green">"╚══════════════════════════════════════════╝"</span>
+  ls -lh terangaos-1.0-amd64.iso
+<span class="c-blue">else</span>
+  <span class="c-gold">echo</span> <span class="c-red">"[ERREUR] Build échoué. Voir build.log"</span>
+  exit 1
+<span class="c-blue">fi</span></pre>
+    </div>
+
+    <!-- Hook Hyprland -->
+    <h3 style="color:var(--gold);font-size:1rem;margin:1.5rem 0 .5rem">📄 Hook — Compilation Hyprland depuis source</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">config/hooks/live/0002-hyprland-build.hook.chroot</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        </div>
+      </div>
+      <pre><span class="c-muted">#!/bin/bash</span>
+set -e
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Compilation Hyprland + composants hyprwm..."</span>
+
+<span class="c-muted"># Dépendances de compilation Hyprland</span>
+apt-get install -y \
+  libwayland-dev libwayland-egl1 libwayland-server0 \
+  libxkbcommon-dev libxkbcommon-x11-dev \
+  libegl1-mesa-dev libgles2-mesa-dev \
+  libdrm-dev libgbm-dev \
+  libpango1.0-dev libcairo2-dev \
+  libseat-dev libinput-dev \
+  libudev-dev libsystemd-dev \
+  libpixman-1-dev \
+  libvulkan-dev glslang-dev \
+  libtomlplusplus-dev \
+  librsvg2-dev \
+  hwdata libdisplay-info-dev \
+  meson cmake ninja-build pkg-config \
+  git curl
+
+<span class="c-muted"># Cloner et compiler Hyprland</span>
+cd /tmp
+git clone --recursive https://github.com/hyprwm/Hyprland --branch v0.41.0
+cd Hyprland
+
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Configuration Hyprland..."</span>
+cmake -B build \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -G Ninja
+
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Compilation en cours (peut prendre 15-30 min)..."</span>
+cmake --build build -j$(nproc)
+cmake --install build
+
+<span class="c-muted"># Hyprpaper</span>
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Compilation Hyprpaper..."</span>
+cd /tmp
+git clone https://github.com/hyprwm/hyprpaper --branch v0.7.0
+cd hyprpaper
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -G Ninja
+cmake --build build -j$(nproc)
+cmake --install build
+
+<span class="c-muted"># Hyprlock</span>
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Compilation Hyprlock..."</span>
+cd /tmp
+git clone https://github.com/hyprwm/hyprlock --branch v0.5.0
+cd hyprlock
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -G Ninja
+cmake --build build -j$(nproc)
+cmake --install build
+
+<span class="c-muted"># Nettoyage sources</span>
+rm -rf /tmp/Hyprland /tmp/hyprpaper /tmp/hyprlock
+
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Hyprland $(Hyprland --version) installé ✓"</span></pre>
+    </div>
+
+    <!-- Hook Ollama + Branding -->
+    <h3 style="color:var(--gold);font-size:1rem;margin:1.5rem 0 .5rem">📄 Hook — Ollama + Branding TérangaOS</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">config/hooks/live/0003-ollama-branding.hook.chroot</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        </div>
+      </div>
+      <pre><span class="c-muted">#!/bin/bash</span>
+set -e
+
+<span class="c-muted"># ── Ollama (LLM local) ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Installation Ollama..."</span>
+curl -fsSL https://ollama.com/install.sh | sh
+systemctl enable ollama
+
+<span class="c-muted"># ── Open WebUI (interface Ollama) ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Installation Open WebUI..."</span>
+pip3 install open-webui --break-system-packages || true
+
+<span class="c-muted"># ── Metasploit Framework ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Installation Metasploit..."</span>
+curl -fsSL https://apt.metasploit.com/metasploit-framework.gpg | \
+  gpg --dearmor > /etc/apt/trusted.gpg.d/metasploit.gpg
+<span class="c-gold">echo</span> <span class="c-green">"deb https://apt.metasploit.com/ buster main"</span> > \
+  /etc/apt/sources.list.d/metasploit.list
+apt-get update && apt-get install -y metasploit-framework
+
+<span class="c-muted"># ── Branding OS ──</span>
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Application du branding TérangaOS..."</span>
+cat > /etc/os-release <span class="c-green">&lt;&lt; 'EOF'
+NAME="TérangaOS"
+VERSION="1.0 (Djolof)"
+ID=terangaos
+ID_LIKE=debian
+PRETTY_NAME="TérangaOS 1.0 (Djolof)"
+ANSI_COLOR="1;33"
+HOME_URL="https://esp.sn"
+SUPPORT_URL="https://github.com/terangaos"
+BUG_REPORT_URL="https://github.com/terangaos/issues"
+VERSION_CODENAME=djolof
+EOF</span>
+
+<span class="c-muted"># ── MOTD (message d'accueil terminal) ──</span>
+cat > /etc/motd <span class="c-green">&lt;&lt; 'EOF'
+
+  ████████╗███████╗██████╗  █████╗ ███╗  ██╗ ██████╗  █████╗
+     ██╔══╝██╔════╝██╔══██╗██╔══██╗████╗ ██║██╔════╝ ██╔══██╗
+     ██║   █████╗  ██████╔╝███████║██╔██╗██║██║ ████╗███████║
+     ██║   ██╔══╝  ██╔══██╗██╔══██║██║╚████║██║   ██║██╔══██║
+     ██║   ███████╗██║  ██║██║  ██║██║ ╚███║╚██████╔╝██║  ██║
+     ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚══╝ ╚═════╝ ╚═╝  ╚═╝
+
+  Version : 1.0 (Djolof) | Base : Debian 12 Bookworm
+  Piliers  : 🔒 Cybersécurité · ⚡ Développement · 🤖 IA
+  Origine  : ESP/UCAD Dakar, Sénégal 🌍
+
+  "Dalal ak diam" — Bienvenue en paix.
+
+EOF</span>
+
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Branding appliqué ✓"</span></pre>
+    </div>
+
+    <!-- os-release -->
+    <h3 style="color:var(--gold);font-size:1rem;margin:1.5rem 0 .5rem">📄 Hook — Utilisateur teranga + Oh My Zsh</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">config/hooks/live/0005-users-setup.hook.chroot</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        </div>
+      </div>
+      <pre><span class="c-muted">#!/bin/bash</span>
+set -e
+
+<span class="c-muted"># Créer l'utilisateur principal</span>
+useradd -m -s /bin/zsh -G sudo,video,audio,input,netdev,plugdev teranga
+<span class="c-gold">echo</span> <span class="c-green">'teranga:teranga'</span> | chpasswd
+<span class="c-muted"># root sans mot de passe sur live</span>
+passwd -d root
+
+<span class="c-muted"># Oh My Zsh pour teranga</span>
+su - teranga -c <span class="c-green">'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended'</span>
+
+<span class="c-muted"># Plugins zsh</span>
+su - teranga -c <span class="c-green">'git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions'</span>
+su - teranga -c <span class="c-green">'git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting'</span>
+
+<span class="c-muted"># .zshrc thémé TérangaOS</span>
+cat > /home/teranga/.zshrc <span class="c-green">&lt;&lt; 'ZSHRC'
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="agnoster"
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting docker)
+source $ZSH/oh-my-zsh.sh
+export LANG=fr_FR.UTF-8
+export EDITOR=nano
+alias ll='ls -la --color=auto'
+alias update='sudo apt update && sudo apt upgrade -y'
+alias cybertools='ls /usr/bin/nmap /usr/bin/wireshark /usr/bin/aircrack-ng'
+alias ai='ollama run llama3.1'
+echo "Bienvenue sur TérangaOS 🌍 — Dalal ak diam"
+ZSHRC</span>
+
+chown teranga:teranga /home/teranga/.zshrc
+
+<span class="c-muted"># Autostart Hyprland depuis SDDM</span>
+mkdir -p /usr/share/wayland-sessions
+cat > /usr/share/wayland-sessions/hyprland.desktop <span class="c-green">&lt;&lt; 'EOF'
+[Desktop Entry]
+Name=Hyprland
+Comment=TérangaOS — Hyprland Wayland Compositor
+Exec=Hyprland
+Type=Application
+EOF</span>
+
+<span class="c-gold">echo</span> <span class="c-green">"[HOOK] Utilisateur teranga configuré ✓"</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE 4 : HYPRLAND CONFIG ═══════════════ -->
+<div id="page-hyprland" class="page">
+  <div class="container">
+    <p class="section-sub">Configuration graphique complète</p>
+    <h2 class="section-title"><span>Hyprland</span> — Config TérangaOS</h2>
+
+    <h3 style="color:var(--gold);font-size:1rem;margin:1rem 0 .5rem">📄 hyprland.conf — Configuration principale</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">~/.config/hypr/hyprland.conf</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="code-lang">hyprconf</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        </div>
+      </div>
+      <pre><span class="c-muted"># ═══════════════════════════════════════════════</span>
+<span class="c-muted"># TérangaOS — Hyprland Configuration</span>
+<span class="c-muted"># Codename: Djolof | ESP/UCAD Dakar</span>
+<span class="c-muted"># ═══════════════════════════════════════════════</span>
+
+<span class="c-gold">monitor</span>=,preferred,auto,1
+
+<span class="c-muted"># Autostart</span>
+<span class="c-gold">exec-once</span> = hyprpaper
+<span class="c-gold">exec-once</span> = waybar
+<span class="c-gold">exec-once</span> = mako
+<span class="c-gold">exec-once</span> = nm-applet --indicator
+<span class="c-gold">exec-once</span> = udiskie -t
+<span class="c-gold">exec-once</span> = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+<span class="c-gold">exec-once</span> = wl-paste --type text --watch cliphist store
+
+<span class="c-muted"># Variables d'environnement Wayland</span>
+<span class="c-blue">env</span> = XCURSOR_SIZE,24
+<span class="c-blue">env</span> = XDG_CURRENT_DESKTOP,Hyprland
+<span class="c-blue">env</span> = XDG_SESSION_TYPE,wayland
+<span class="c-blue">env</span> = XDG_SESSION_DESKTOP,Hyprland
+<span class="c-blue">env</span> = GDK_BACKEND,wayland,x11
+<span class="c-blue">env</span> = QT_QPA_PLATFORM,wayland;xcb
+<span class="c-blue">env</span> = MOZ_ENABLE_WAYLAND,1
+
+<span class="c-muted"># ── APPARENCE ──</span>
+<span class="c-gold">general</span> {
+    gaps_in = 5
+    gaps_out = 10
+    border_size = 2
+    col.active_border = <span class="c-green">rgba(FFBE00ff) rgba(C85200ff) 45deg</span>
+    col.inactive_border = <span class="c-green">rgba(1A1408aa)</span>
+    layout = dwindle
+    allow_tearing = false
+}
+
+<span class="c-gold">decoration</span> {
+    rounding = 10
+    blur {
+        enabled = true
+        size = 6
+        passes = 3
+        new_optimizations = true
+        xray = false
+        ignore_opacity = false
+    }
+    drop_shadow = true
+    shadow_range = 20
+    shadow_render_power = 3
+    col.shadow = <span class="c-green">rgba(FFBE0022)</span>
+    col.shadow_inactive = <span class="c-green">rgba(00000044)</span>
+    active_opacity = 1.0
+    inactive_opacity = 0.92
+}
+
+<span class="c-gold">animations</span> {
+    enabled = true
+    bezier = teranga, 0.05, 0.9, 0.1, 1.05
+    bezier = smooth, 0.4, 0.0, 0.2, 1.0
+    animation = windows, 1, 7, teranga
+    animation = windowsOut, 1, 7, default, popin 80%
+    animation = border, 1, 10, default
+    animation = borderangle, 1, 8, default
+    animation = fade, 1, 7, default
+    animation = workspaces, 1, 6, smooth
+}
+
+<span class="c-gold">input</span> {
+    kb_layout = fr
+    kb_options = caps:escape
+    follow_mouse = 1
+    touchpad {
+        natural_scroll = true
+        tap-to-click = true
+        drag_lock = true
+    }
+    sensitivity = 0
+}
+
+<span class="c-gold">dwindle</span> {
+    pseudotile = true
+    preserve_split = true
+}
+
+<span class="c-gold">gestures</span> {
+    workspace_swipe = true
+    workspace_swipe_fingers = 3
+}
+
+<span class="c-gold">misc</span> {
+    force_default_wallpaper = 0
+    disable_hyprland_logo = true
+    disable_splash_rendering = true
+}
+
+<span class="c-muted"># ── KEYBINDINGS ──</span>
+<span class="c-gold">$mod</span> = SUPER
+
+<span class="c-muted"># Apps essentielles</span>
+<span class="c-gold">bind</span> = $mod, Return, exec, kitty
+<span class="c-gold">bind</span> = $mod, E, exec, thunar
+<span class="c-gold">bind</span> = $mod, B, exec, firefox
+<span class="c-gold">bind</span> = $mod, C, exec, code
+<span class="c-gold">bind</span> = $mod SHIFT, S, exec, grimblast copy area
+<span class="c-gold">bind</span> = $mod, D, exec, wofi --show drun --prompt "TérangaOS"
+<span class="c-gold">bind</span> = $mod, L, exec, hyprlock
+
+<span class="c-muted"># Gestion des fenêtres</span>
+<span class="c-gold">bind</span> = $mod, Q, killactive
+<span class="c-gold">bind</span> = $mod SHIFT, E, exit
+<span class="c-gold">bind</span> = $mod, V, togglefloating
+<span class="c-gold">bind</span> = $mod, F, fullscreen
+<span class="c-gold">bind</span> = $mod, P, pseudo
+
+<span class="c-muted"># Navigation</span>
+<span class="c-gold">bind</span> = $mod, H, movefocus, l
+<span class="c-gold">bind</span> = $mod, L, movefocus, r
+<span class="c-gold">bind</span> = $mod, K, movefocus, u
+<span class="c-gold">bind</span> = $mod, J, movefocus, d
+
+<span class="c-muted"># Workspaces</span>
+<span class="c-gold">bind</span> = $mod, 1, workspace, 1
+<span class="c-gold">bind</span> = $mod, 2, workspace, 2
+<span class="c-gold">bind</span> = $mod, 3, workspace, 3
+<span class="c-gold">bind</span> = $mod, 4, workspace, 4
+<span class="c-gold">bind</span> = $mod, 5, workspace, 5
+<span class="c-gold">bind</span> = $mod SHIFT, 1, movetoworkspace, 1
+<span class="c-gold">bind</span> = $mod SHIFT, 2, movetoworkspace, 2
+<span class="c-gold">bind</span> = $mod SHIFT, 3, movetoworkspace, 3
+
+<span class="c-muted"># Molette souris</span>
+<span class="c-gold">bind</span> = $mod, mouse_down, workspace, e+1
+<span class="c-gold">bind</span> = $mod, mouse_up, workspace, e-1
+<span class="c-gold">bindm</span> = $mod, mouse:272, movewindow
+<span class="c-gold">bindm</span> = $mod, mouse:273, resizewindow
+
+<span class="c-muted"># Volume & Brightness</span>
+<span class="c-gold">bind</span> = , XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%
+<span class="c-gold">bind</span> = , XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -5%
+<span class="c-gold">bind</span> = , XF86AudioMute, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle
+<span class="c-gold">bind</span> = , XF86MonBrightnessUp, exec, brightnessctl s 5%+
+<span class="c-gold">bind</span> = , XF86MonBrightnessDown, exec, brightnessctl s 5%-
+
+<span class="c-muted"># Règles fenêtres</span>
+<span class="c-gold">windowrulev2</span> = float, class:^(pavucontrol)$
+<span class="c-gold">windowrulev2</span> = float, class:^(blueman-manager)$
+<span class="c-gold">windowrulev2</span> = opacity 0.92 0.85, class:^(kitty)$
+<span class="c-gold">windowrulev2</span> = opacity 0.95 0.90, class:^(Code)$</pre>
+    </div>
+
+    <!-- Waybar config -->
+    <h3 style="color:var(--gold);font-size:1rem;margin:1.5rem 0 .5rem">📄 Waybar — config.jsonc</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">~/.config/waybar/config.jsonc</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="code-lang">json</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        </div>
+      </div>
+      <pre>{
+  <span class="c-green">"layer"</span>: <span class="c-gold">"top"</span>,
+  <span class="c-green">"position"</span>: <span class="c-gold">"top"</span>,
+  <span class="c-green">"height"</span>: <span class="c-blue">32</span>,
+  <span class="c-green">"spacing"</span>: <span class="c-blue">4</span>,
+  <span class="c-green">"modules-left"</span>: [<span class="c-gold">"custom/logo"</span>, <span class="c-gold">"hyprland/workspaces"</span>, <span class="c-gold">"hyprland/window"</span>],
+  <span class="c-green">"modules-center"</span>: [<span class="c-gold">"clock"</span>],
+  <span class="c-green">"modules-right"</span>: [
+    <span class="c-gold">"custom/ollama"</span>, <span class="c-gold">"pulseaudio"</span>, <span class="c-gold">"network"</span>,
+    <span class="c-gold">"cpu"</span>, <span class="c-gold">"memory"</span>, <span class="c-gold">"battery"</span>, <span class="c-gold">"tray"</span>
+  ],
+  <span class="c-green">"custom/logo"</span>: {
+    <span class="c-green">"format"</span>: <span class="c-gold">" TérangaOS"</span>,
+    <span class="c-green">"tooltip"</span>: <span class="c-blue">false</span>
+  },
+  <span class="c-green">"hyprland/workspaces"</span>: {
+    <span class="c-green">"format"</span>: <span class="c-gold">"{id}"</span>,
+    <span class="c-green">"on-click"</span>: <span class="c-gold">"activate"</span>
+  },
+  <span class="c-green">"clock"</span>: {
+    <span class="c-green">"format"</span>: <span class="c-gold">" {:%a %d %b · %H:%M}"</span>,
+    <span class="c-green">"tooltip-format"</span>: <span class="c-gold">"{calendar}"</span>
+  },
+  <span class="c-green">"custom/ollama"</span>: {
+    <span class="c-green">"exec"</span>: <span class="c-gold">"systemctl is-active ollama &>/dev/null && echo '🤖 AI' || echo '🤖 off'"</span>,
+    <span class="c-green">"interval"</span>: <span class="c-blue">10</span>,
+    <span class="c-green">"on-click"</span>: <span class="c-gold">"kitty ollama run llama3.1"</span>
+  },
+  <span class="c-green">"cpu"</span>: { <span class="c-green">"format"</span>: <span class="c-gold">" {usage}%"</span>, <span class="c-green">"interval"</span>: <span class="c-blue">2</span> },
+  <span class="c-green">"memory"</span>: { <span class="c-green">"format"</span>: <span class="c-gold">" {}%"</span> },
+  <span class="c-green">"battery"</span>: {
+    <span class="c-green">"format"</span>: <span class="c-gold">"{icon} {capacity}%"</span>,
+    <span class="c-green">"format-icons"</span>: [<span class="c-gold">""</span>, <span class="c-gold">""</span>, <span class="c-gold">""</span>, <span class="c-gold">""</span>, <span class="c-gold">""</span>]
+  },
+  <span class="c-green">"network"</span>: {
+    <span class="c-green">"format-wifi"</span>: <span class="c-gold">" {essid}"</span>,
+    <span class="c-green">"format-ethernet"</span>: <span class="c-gold">" Ethernet"</span>,
+    <span class="c-green">"format-disconnected"</span>: <span class="c-gold">"⚠ Déconnecté"</span>
+  },
+  <span class="c-green">"pulseaudio"</span>: {
+    <span class="c-green">"format"</span>: <span class="c-gold">"{icon} {volume}%"</span>,
+    <span class="c-green">"format-icons"</span>: { <span class="c-green">"default"</span>: [<span class="c-gold">""</span>, <span class="c-gold">""</span>, <span class="c-gold">""</span>] },
+    <span class="c-green">"on-click"</span>: <span class="c-gold">"pavucontrol"</span>
+  },
+  <span class="c-green">"tray"</span>: { <span class="c-green">"spacing"</span>: <span class="c-blue">8</span> }
+}</pre>
+    </div>
+
+    <!-- Kitty config -->
+    <h3 style="color:var(--gold);font-size:1rem;margin:1.5rem 0 .5rem">📄 Kitty Terminal — thème TérangaOS</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">~/.config/kitty/kitty.conf</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="code-lang">conf</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        </div>
+      </div>
+      <pre><span class="c-muted"># TérangaOS — Kitty Terminal Theme</span>
+font_family      JetBrains Mono
+font_size        12.0
+bold_font        JetBrains Mono Bold
+
+<span class="c-muted"># Couleurs TérangaOS</span>
+background            <span class="c-gold">#0a0702</span>
+foreground            <span class="c-gold">#F5EDD8</span>
+selection_background  <span class="c-gold">#FFBE0033</span>
+selection_foreground  <span class="c-gold">#FFBE00</span>
+cursor                <span class="c-gold">#FFBE00</span>
+cursor_text_color     <span class="c-gold">#0a0702</span>
+url_color             <span class="c-gold">#7EC8FF</span>
+
+<span class="c-muted"># Ansi colors</span>
+color0   <span class="c-gold">#1a1408</span>   color8   <span class="c-gold">#2a2210</span>
+color1   <span class="c-gold">#FF6B6B</span>   color9   <span class="c-gold">#FF8888</span>
+color2   <span class="c-gold">#4FFFAA</span>   color10  <span class="c-gold">#70FFBB</span>
+color3   <span class="c-gold">#FFBE00</span>   color11  <span class="c-gold">#FFCF40</span>
+color4   <span class="c-gold">#7EC8FF</span>   color12  <span class="c-gold">#99D4FF</span>
+color5   <span class="c-gold">#C85200</span>   color13  <span class="c-gold">#FF7A30</span>
+color6   <span class="c-gold">#4FFFAA</span>   color14  <span class="c-gold">#80FFCC</span>
+color7   <span class="c-gold">#F5EDD8</span>   color15  <span class="c-gold">#FFFFFF</span>
+
+<span class="c-muted"># Interface</span>
+background_opacity        0.92
+window_padding_width      12
+tab_bar_style             powerline
+tab_powerline_style       slanted
+active_tab_background     #FFBE00
+active_tab_foreground     #0a0702
+inactive_tab_background   #1a1408
+inactive_tab_foreground   #F5EDD880
+
+confirm_os_window_close   0
+enable_audio_bell         no</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE 5 : THÈME ═══════════════ -->
+<div id="page-theme" class="page">
+  <div class="container">
+    <p class="section-sub">Thème visuel complet</p>
+    <h2 class="section-title">Thème <span>Djolof</span></h2>
+
+    <h3 style="color:var(--gold);font-size:1rem;margin:1rem 0 .5rem">🎨 Waybar — style.css</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">~/.config/waybar/style.css</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="code-lang">css</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        </div>
+      </div>
+      <pre><span class="c-muted">/* TérangaOS — Waybar Theme Djolof */</span>
+* {
+  font-family: "JetBrains Mono", "Font Awesome 6 Free";
+  font-size: 12px;
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+}
+
+window#waybar {
+  background: <span class="c-green">rgba(10, 7, 2, 0.88)</span>;
+  border-bottom: 1px solid <span class="c-green">rgba(255, 190, 0, 0.15)</span>;
+  color: <span class="c-gold">#F5EDD8</span>;
+}
+
+<span class="c-muted">/* Modules de gauche */</span>
+.modules-left > widget:first-child > #workspaces {
+  margin: 0 4px;
+}
+
+#custom-logo {
+  color: <span class="c-gold">#FFBE00</span>;
+  font-weight: bold;
+  padding: 0 12px;
+  font-family: "Playfair Display", serif;
+}
+
+#workspaces button {
+  padding: 0 6px;
+  color: <span class="c-green">rgba(245, 237, 216, 0.4)</span>;
+  background: transparent;
+}
+
+#workspaces button.active {
+  color: <span class="c-gold">#FFBE00</span>;
+  background: <span class="c-green">rgba(255, 190, 0, 0.12)</span>;
+  border-radius: 6px;
+  border-bottom: 2px solid <span class="c-gold">#FFBE00</span>;
+}
+
+#workspaces button:hover {
+  background: <span class="c-green">rgba(255, 190, 0, 0.08)</span>;
+  border-radius: 6px;
+}
+
+<span class="c-muted">/* Centre — horloge */</span>
+#clock {
+  color: <span class="c-gold">#FFBE00</span>;
+  font-weight: 600;
+  background: <span class="c-green">rgba(255, 190, 0, 0.06)</span>;
+  padding: 2px 16px;
+  border-radius: 8px;
+  border: 1px solid <span class="c-green">rgba(255, 190, 0, 0.12)</span>;
+}
+
+<span class="c-muted">/* Modules de droite */</span>
+#cpu, #memory, #battery, #network, #pulseaudio,
+#custom-ollama, #tray {
+  padding: 2px 10px;
+  color: <span class="c-green">rgba(245, 237, 216, 0.7)</span>;
+  background: <span class="c-green">rgba(255, 190, 0, 0.04)</span>;
+  border-radius: 6px;
+  border: 1px solid <span class="c-green">rgba(255, 190, 0, 0.07)</span>;
+  margin: 3px 2px;
+}
+
+#cpu { color: <span class="c-gold">#7EC8FF</span>; }
+#memory { color: <span class="c-gold">#4FFFAA</span>; }
+#battery { color: <span class="c-gold">#FFBE00</span>; }
+#battery.critical { color: <span class="c-gold">#FF6B6B</span>; animation: blink 1s infinite; }
+#network { color: <span class="c-gold">#4FFFAA</span>; }
+#custom-ollama { color: <span class="c-gold">#7EC8FF</span>; }
+
+@keyframes blink {
+  to { opacity: 0.5; }
+}</pre>
+    </div>
+
+    <h3 style="color:var(--gold);font-size:1rem;margin:1.5rem 0 .5rem">🔔 Mako — Notifications</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">~/.config/mako/config</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="code-lang">conf</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        </div>
+      </div>
+      <pre>background-color=<span class="c-gold">#120e06ee</span>
+text-color=<span class="c-gold">#F5EDD8</span>
+border-color=<span class="c-gold">#FFBE0044</span>
+progress-color=over <span class="c-gold">#FFBE0033</span>
+border-size=1
+border-radius=10
+font=JetBrains Mono 11
+width=320
+height=100
+padding=12
+margin=8
+anchor=top-right
+layer=overlay
+default-timeout=5000
+
+[urgency=low]
+border-color=<span class="c-gold">#FFBE0022</span>
+
+[urgency=critical]
+border-color=<span class="c-gold">#FF6B6Baa</span>
+background-color=<span class="c-gold">#200505ee</span></pre>
+    </div>
+
+    <h3 style="color:var(--gold);font-size:1rem;margin:1.5rem 0 .5rem">🔍 Wofi — Launcher</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-file">~/.config/wofi/style.css</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="code-lang">css</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        </div>
+      </div>
+      <pre>window {
+  background-color: <span class="c-gold">#0a0702ee</span>;
+  border: 1px solid <span class="c-gold">#FFBE0033</span>;
+  border-radius: 12px;
+}
+#input {
+  background: <span class="c-gold">#1a1408</span>;
+  color: <span class="c-gold">#F5EDD8</span>;
+  border: 1px solid <span class="c-gold">#FFBE0033</span>;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: "JetBrains Mono";
+  font-size: 13px;
+  margin: 8px;
+}
+#inner-box { background: transparent; }
+#outer-box { padding: 4px; }
+#entry { padding: 8px 12px; border-radius: 6px; }
+#entry:selected { background: <span class="c-gold">#FFBE0015</span>; border: 1px solid <span class="c-gold">#FFBE0033</span>; }
+#text { color: <span class="c-gold">#F5EDD8</span>; font-family: "Syne"; }
+#text:selected { color: <span class="c-gold">#FFBE00</span>; }</pre>
+    </div>
+
+    <h3 style="color:var(--gold);font-size:1rem;margin:1.5rem 0 .5rem">🖼️ Wallpaper — Aperçu</h3>
+    <div class="wp-preview">
+      <div class="wp-logo">TérangaOS</div>
+      <div class="wp-tagline">Djolof · ESP/UCAD Dakar · 2026</div>
+    </div>
+    <div class="code-block" style="margin-top:.8rem">
+      <div class="code-header">
+        <span class="code-file">~/.config/hypr/hyprpaper.conf</span>
+        <span class="code-lang">conf</span>
+      </div>
+      <pre>preload = /usr/share/backgrounds/terangaos/djolof.png
+wallpaper = ,/usr/share/backgrounds/terangaos/djolof.png
+splash = false</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE 6 : GUIDE WINDOWS ═══════════════ -->
+<div id="page-windows" class="page">
+  <div class="container">
+    <p class="section-sub">Depuis Windows</p>
+    <h2 class="section-title">Construire depuis <span>Windows</span></h2>
+
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠️</span>
+      <div><strong>Hyprland compile depuis les sources</strong> — le build complet prend <strong>1h à 3h</strong> selon ton CPU. Assure-toi d'avoir au moins <strong>8 Go RAM, 4 cœurs et 80 Go d'espace disque</strong> disponibles.</div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <div class="step-title">Installer WSL2 + Debian</div>
+          <div class="step-desc">Ouvre PowerShell en administrateur et installe WSL2 avec Debian comme distribution.</div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-file">PowerShell — Administrateur</span><span class="code-lang">powershell</span></div>
+            <pre><span class="c-muted"># Activer WSL2</span>
+wsl --install
+wsl --install -d Debian
+
+<span class="c-muted"># Définir WSL2 par défaut</span>
+wsl --set-default-version 2
+
+<span class="c-muted"># Vérifier</span>
+wsl --list --verbose</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <div class="step-title">Préparer l'environnement de build dans WSL2</div>
+          <div class="step-desc">Dans le terminal Debian WSL2, installe toutes les dépendances nécessaires.</div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-file">WSL2 — Debian bash</span><span class="code-lang">bash</span></div>
+            <pre><span class="c-muted"># Mise à jour système</span>
+sudo apt update && sudo apt upgrade -y
+
+<span class="c-muted"># Outils de build TérangaOS</span>
+sudo apt install -y \
+  live-build debootstrap \
+  git curl wget \
+  build-essential cmake ninja-build pkg-config \
+  meson \
+  libwayland-dev libxkbcommon-dev \
+  libegl1-mesa-dev libgles2-mesa-dev \
+  libdrm-dev libgbm-dev \
+  libseat-dev libinput-dev libudev-dev \
+  libpixman-1-dev libvulkan-dev \
+  glslang-dev libpango1.0-dev \
+  libcairo2-dev libsystemd-dev \
+  hwdata libdisplay-info-dev \
+  squashfs-tools xorriso isolinux
+
+<span class="c-muted"># Vérifier live-build</span>
+lb --version</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <div class="step-title">Cloner le projet TérangaOS</div>
+          <div class="step-desc">Crée la structure du projet et copie tous les scripts de ce guide.</div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-file">WSL2</span><span class="code-lang">bash</span></div>
+            <pre><span class="c-muted"># Créer le répertoire de travail</span>
+mkdir -p ~/terangaos/config/{package-lists,hooks/live,includes.chroot}
+mkdir -p ~/terangaos/config/includes.chroot/etc
+mkdir -p ~/terangaos/config/includes.chroot/home/teranga/.config/{hypr,waybar,kitty,wofi,mako}
+mkdir -p ~/terangaos/config/includes.chroot/usr/share/{backgrounds/terangaos,grub/themes/terangaos}
+cd ~/terangaos
+
+<span class="c-muted"># Copier les scripts de l'onglet "Build Scripts"</span>
+<span class="c-muted"># → build.sh, hooks, package-lists</span>
+chmod +x build.sh config/hooks/live/*.hook.chroot</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <div class="step-title">Injecter les configs Hyprland</div>
+          <div class="step-desc">Copie les fichiers de l'onglet "Hyprland" et "Thème" dans les bons répertoires includes.chroot.</div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-file">WSL2</span><span class="code-lang">bash</span></div>
+            <pre">BASE=~/terangaos/config/includes.chroot/home/teranga/.config
+
+<span class="c-muted"># Créer hyprland.conf (copier depuis onglet Hyprland)</span>
+nano $BASE/hypr/hyprland.conf
+
+<span class="c-muted"># Créer waybar config + style</span>
+nano $BASE/waybar/config.jsonc
+nano $BASE/waybar/style.css
+
+<span class="c-muted"># Kitty theme</span>
+nano $BASE/kitty/kitty.conf
+
+<span class="c-muted"># Wofi style</span>
+nano $BASE/wofi/style.css
+
+<span class="c-muted"># Mako notifications</span>
+nano $BASE/mako/config</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-body">
+          <div class="step-title">Lancer le build</div>
+          <div class="step-desc">Lance le build principal. Durée estimée : 1h à 3h selon ta connexion et ton CPU.</div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-file">WSL2 — dans ~/terangaos</span><span class="code-lang">bash</span></div>
+            <pre">cd ~/terangaos
+sudo bash build.sh 2>&1 | tee build.log
+
+<span class="c-muted"># Suivre la progression en temps réel</span>
+tail -f build.log</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">06</div>
+        <div class="step-body">
+          <div class="step-title">Récupérer l'ISO et tester dans VirtualBox</div>
+          <div class="step-desc">L'ISO est générée dans ~/terangaos/. Copie-la vers Windows puis boot dans VirtualBox.</div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-file">WSL2 → Windows</span><span class="code-lang">bash</span></div>
+            <pre"><span class="c-muted"># Copier l'ISO vers le bureau Windows</span>
+cp ~/terangaos/terangaos-1.0-amd64.iso /mnt/c/Users/$USER/Desktop/
+
+<span class="c-muted"># Vérifier l'intégrité</span>
+sha256sum terangaos-1.0-amd64.iso</pre>
+          </div>
+          <div class="alert alert-info" style="margin-top:.8rem">
+            <span class="alert-icon">ℹ️</span>
+            <div>Dans <strong>VirtualBox</strong> : Nouvelle VM → Linux/Debian 64-bit → 4 Go RAM → 40 Go disque → <strong>Activer EFI</strong> → Démarrer depuis l'ISO TérangaOS. Hyprland nécessite une accélération 3D → activer dans Affichage → Mémoire vidéo 128 Mo.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;font-weight:700;color:var(--cream);margin:2rem 0 1rem">📊 Ressources requises</h3>
+    <table>
+      <thead><tr><th>Ressource</th><th>Minimum</th><th>Recommandé</th></tr></thead>
+      <tbody>
+        <tr><td>RAM (WSL2)</td><td>4 Go</td><td><span style="color:var(--green)">8 Go</span></td></tr>
+        <tr><td>CPU</td><td>4 cœurs</td><td><span style="color:var(--green)">8 cœurs (build Hyprland rapide)</span></td></tr>
+        <tr><td>Espace disque</td><td>50 Go</td><td><span style="color:var(--green)">80 Go</span></td></tr>
+        <tr><td>Connexion internet</td><td>10 Mb/s</td><td><span style="color:var(--green)">50 Mb/s+</span></td></tr>
+        <tr><td>Durée totale build</td><td>3h</td><td><span style="color:var(--green)">1h (8 cœurs)</span></td></tr>
+        <tr><td>Taille ISO finale</td><td>~4 Go</td><td>~4.5 Go (avec tous les outils)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>

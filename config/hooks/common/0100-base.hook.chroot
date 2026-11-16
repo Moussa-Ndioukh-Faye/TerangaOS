@@ -1,0 +1,80 @@
+#!/bin/bash
+# TérangaOS — configuration de base (toutes les variantes)
+set -euo pipefail
+
+echo "[TERANGA] Hook 0100 : configuration de base"
+
+# --- Langue et fuseau horaire -------------------------------------------------
+sed -i -e 's/^# *\(fr_FR.UTF-8 UTF-8\)/\1/' -e 's/^# *\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen
+grep -q '^fr_FR.UTF-8 UTF-8' /etc/locale.gen || echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen
+grep -q '^en_US.UTF-8 UTF-8' /etc/locale.gen || echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+locale-gen
+update-locale LANG=fr_FR.UTF-8
+
+ln -sf /usr/share/zoneinfo/Africa/Dakar /etc/localtime
+echo "Africa/Dakar" > /etc/timezone
+
+# --- Identité du système ------------------------------------------------------
+cat > /usr/lib/os-release <<EOF
+PRETTY_NAME="TérangaOS 1.0 (Djolof)"
+NAME="TérangaOS"
+VERSION_ID="1.0"
+VERSION="1.0 (Djolof)"
+VERSION_CODENAME=djolof
+ID=terangaos
+ID_LIKE=debian
+HOME_URL="https://github.com/Moussa-Ndioukh-Faye/TerangaOS"
+SUPPORT_URL="https://github.com/Moussa-Ndioukh-Faye/TerangaOS"
+BUG_REPORT_URL="https://github.com/Moussa-Ndioukh-Faye/TerangaOS/issues"
+ANSI_COLOR="1;33"
+BUILD_ID="$(date -u +%Y%m%d)"
+EOF
+ln -sf ../usr/lib/os-release /etc/os-release
+
+# --- Shell par défaut : zsh (nouveaux utilisateurs, live et installés) -------
+if [ -f /etc/adduser.conf ]; then
+    sed -i 's|^#\?DSHELL=.*|DSHELL=/bin/zsh|' /etc/adduser.conf
+fi
+if [ -f /etc/default/useradd ]; then
+    sed -i 's|^#\? *SHELL=.*|SHELL=/bin/zsh|' /etc/default/useradd
+fi
+
+# --- Oh My Zsh dans /etc/skel (facultatif : le build continue sans) ---------
+if git clone --depth 1 https://github.com/ohmyzsh/ohmyzsh.git /etc/skel/.oh-my-zsh; then
+    git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions \
+        /etc/skel/.oh-my-zsh/custom/plugins/zsh-autosuggestions || true
+    git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting \
+        /etc/skel/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting || true
+    rm -rf /etc/skel/.oh-my-zsh/.git
+else
+    echo "[WARN] Oh My Zsh non téléchargé : zsh restera en configuration simple"
+fi
+
+# --- Scripts TérangaOS ---------------------------------------------------------
+chmod 0755 /usr/local/bin/teranga-* /usr/lib/live/config/*-terangaos-* 2>/dev/null || true
+
+# --- Services -------------------------------------------------------------------
+systemctl enable NetworkManager || true
+systemctl enable zramswap || true
+systemctl enable gdm3 || true
+
+# --- Réglages GNOME par défaut (/etc/dconf/db/local.d) -----------------------
+dconf update
+
+# --- Écran de connexion GDM ---------------------------------------------------
+# Connexion automatique de l'utilisateur live. Sur un système installé,
+# le module "displaymanager" de Calamares réécrit ces deux valeurs selon
+# le choix fait pendant l'installation.
+GDM_CONF=/etc/gdm3/daemon.conf
+if [ -f "$GDM_CONF" ]; then
+    sed -i -e '/^#\? *AutomaticLoginEnable *=/d' -e '/^#\? *AutomaticLogin *=/d' "$GDM_CONF"
+    sed -i '/^\[daemon\]/a AutomaticLogin=teranga' "$GDM_CONF"
+    sed -i '/^\[daemon\]/a AutomaticLoginEnable=true' "$GDM_CONF"
+fi
+# Retire le logo Debian de l'écran de connexion
+if [ -f /etc/gdm3/greeter.dconf-defaults ]; then
+    sed -i "s|^logo=.*|logo=''|" /etc/gdm3/greeter.dconf-defaults
+    dconf update
+fi
+
+echo "[OK] Configuration de base terminée"

@@ -1,0 +1,13 @@
+#!/bin/bash
+# TérangaOS — accès rapide aux services sénégalais
+CHOIX=$(zenity --list --title="Services Sénégal" --width=420 --height=420 \
+    --text="Choisissez un service :" --column="Service" --column="Adresse" --print-column=2 \
+    "Service Public (gouv.sn)" "https://www.service-public.gouv.sn" \
+    "Teledac (urbanisme)"      "https://www.teledac.sn" \
+    "Senelec (électricité)"    "https://www.senelec.sn" \
+    "Sen'Eau (eau)"            "https://www.seneau.sn" \
+    "Wave"                     "https://www.wave.com" \
+    "ESP / UCAD"               "https://esp.sn" \
+    "Actualités (RTS)"         "https://www.rts.sn") || exit 0
+
+[ -n "$CHOIX" ] && xdg-open "$CHOIX"
