@@ -4,7 +4,8 @@
 - [x] Build live-build sur Debian 13 (trixie)
 - [x] Build depuis Ubuntu via conteneur Docker (`build-docker.sh`)
 - [x] Variantes core / cyber / full
-- [x] Bureau Hyprland + Waybar + Wofi + Kitty (paquets Debian)
+- [x] Bureau GNOME 48 (Dash to Dock, AppIndicator) aux couleurs TérangaOS
+- [ ] Hyprland en option (disponible dans trixie-backports)
 - [x] Installateur graphique Calamares aux couleurs TérangaOS
 - [x] Cybersécurité (nmap, Wireshark, hashcat, sqlmap, Metasploit…)
 - [x] IA locale (Ollama, PyTorch CPU, Jupyter) dans un environnement isolé

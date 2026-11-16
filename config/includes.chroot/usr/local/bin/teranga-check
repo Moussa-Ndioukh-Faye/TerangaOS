@@ -18,7 +18,7 @@ check_bin() {
 echo -e "${YELLOW}TérangaOS — variante : $VARIANT${NC}"
 
 echo -e "\n--- Interface ---"
-for b in Hyprland waybar wofi kitty teranga-services; do check_bin "$b"; done
+for b in gnome-shell nautilus kgx zenity teranga-services; do check_bin "$b"; done
 
 echo -e "\n--- Développement ---"
 for b in python3 node git docker; do check_bin "$b"; done

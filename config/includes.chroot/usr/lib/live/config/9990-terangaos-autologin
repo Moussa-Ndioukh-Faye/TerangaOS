@@ -1,11 +1,9 @@
 #!/bin/sh
 # TérangaOS — connexion automatique dans la session live uniquement.
-# Ce script n'est exécuté que par live-config (au démarrage du live) :
-# un système installé par Calamares garde un écran de connexion normal.
-mkdir -p /etc/sddm.conf.d
-cat > /etc/sddm.conf.d/zz-live-autologin.conf <<EOC
-[Autologin]
-User=${LIVE_USERNAME:-teranga}
-Session=hyprland.desktop
-Relogin=false
-EOC
+# Exécuté par live-config au démarrage du live : un système installé par
+# Calamares garde un écran de connexion normal.
+CONF=/etc/gdm3/daemon.conf
+[ -f "$CONF" ] || exit 0
+grep -q '^AutomaticLoginEnable=true' "$CONF" && exit 0
+sed -i "/^\[daemon\]/a AutomaticLogin=${LIVE_USERNAME:-teranga}" "$CONF"
+sed -i "/^\[daemon\]/a AutomaticLoginEnable=true" "$CONF"

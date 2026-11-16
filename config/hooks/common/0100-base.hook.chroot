@@ -56,6 +56,9 @@ chmod 0755 /usr/local/bin/teranga-* /usr/lib/live/config/*-terangaos-* 2>/dev/nu
 # --- Services -------------------------------------------------------------------
 systemctl enable NetworkManager || true
 systemctl enable zramswap || true
-systemctl enable sddm || true
+systemctl enable gdm3 || true
+
+# --- Réglages GNOME par défaut (/etc/dconf/db/local.d) -----------------------
+dconf update
 
 echo "[OK] Configuration de base terminée"

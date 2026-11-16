@@ -1,11 +1,9 @@
-# TérangaOS — bureau Hyprland (paquets Debian, plus de compilation depuis les sources)
-hyprland hyprpaper hyprlock hypridle
-xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
-xwayland wayland-utils qtwayland5 qt6-wayland
-waybar wofi mako-notifier wlogout swaybg
-kitty thunar thunar-volman
-grim slurp swappy wl-clipboard cliphist brightnessctl
-imv mpv pavucontrol blueman
-policykit-1-gnome mate-polkit
-sddm sddm-theme-debian-elarun
+# TérangaOS — bureau GNOME 48 (Debian 13)
+gnome-core gdm3
+gnome-tweaks gnome-shell-extensions gnome-shell-extension-manager
+gnome-shell-extension-dashtodock gnome-shell-extension-appindicator
+gnome-console gnome-text-editor nautilus loupe evince file-roller
+xdg-desktop-portal-gnome xdg-desktop-portal-gtk
+dconf-cli zenity
+mpv pavucontrol
 adwaita-icon-theme papirus-icon-theme gnome-themes-extra

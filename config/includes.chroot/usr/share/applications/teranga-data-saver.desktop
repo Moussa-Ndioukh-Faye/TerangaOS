@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Économie de données
+Comment=Activer ou désactiver le mode économie de données
+Exec=teranga-data-saver toggle
+Icon=network-cellular-signal-weak
+Terminal=false
+Categories=Network;Utility;

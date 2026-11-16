@@ -1,6 +1,6 @@
 # 🌍 TérangaOS 1.0 — « Djolof »
 
-Distribution GNU/Linux basée sur **Debian 13 (trixie)**, avec le bureau **Hyprland**, pensée pour l'Afrique de l'Ouest autour de trois piliers : 🔒 cybersécurité, ⚡ développement et 🤖 intelligence artificielle.
+Distribution GNU/Linux basée sur **Debian 13 (trixie)**, avec le bureau **GNOME 48**, pensée pour l'Afrique de l'Ouest autour de trois piliers : 🔒 cybersécurité, ⚡ développement et 🤖 intelligence artificielle.
 
 *Projet ESP / UCAD · Dakar, Sénégal — « Dalal ak diam »*
 
@@ -8,8 +8,8 @@ Distribution GNU/Linux basée sur **Debian 13 (trixie)**, avec le bureau **Hyprl
 
 | Variante | Contenu | ISO (environ) | Build (environ) |
 | :--- | :--- | :--- | :--- |
-| `core` | Hyprland, Waybar, Kitty, Firefox, Python, Node.js, Docker, installateur Calamares | 2,5 Go | 30–45 min |
-| `cyber` | `core` + nmap, Wireshark, hashcat, sqlmap, hydra, Metasploit… | 4 Go | 45–60 min |
+| `core` | GNOME 48, Firefox, Python, Node.js, Docker, installateur Calamares | 3 Go | 30–45 min |
+| `cyber` | `core` + nmap, Wireshark, hashcat, sqlmap, hydra, Metasploit… | 4,5 Go | 45–60 min |
 | `full` (défaut) | `cyber` + Ollama, PyTorch (CPU), Jupyter, Transformers, LangChain | 7 Go | 60–120 min |
 
 Les durées dépendent surtout de la connexion Internet : tous les paquets sont téléchargés pendant le build.
@@ -69,11 +69,10 @@ Session live : utilisateur **`teranga`**, mot de passe **`live`**, connexion aut
 
 | Raccourci | Action |
 | :--- | :--- |
-| `SUPER + Entrée` | Terminal (Kitty) |
-| `SUPER + R` | Menu des applications (dont « Installer TérangaOS ») |
-| `SUPER + S` | Services sénégalais |
-| `SUPER + D` | Documentation hors ligne |
-| `SUPER + E` | Fichiers (Thunar) |
+| `SUPER` | Vue d'ensemble GNOME, recherche d'applications (dont « Installer TérangaOS ») |
+| `SUPER + Entrée` | Terminal |
+| `SUPER + ALT + S` | Services sénégalais |
+| `SUPER + F1` | Documentation hors ligne |
 
 Dans un terminal : `teranga-check` vérifie que les outils de la variante sont bien présents.
 
@@ -88,12 +87,14 @@ config/
   hooks/common/           Scripts exécutés dans l'image, toutes variantes
   hooks/cyber/            … variantes cyber et full (Metasploit)
   hooks/full/             … variante full (Ollama, pile IA)
-  includes.chroot/        Fichiers copiés tels quels dans l'image (dotfiles, scripts teranga-*)
+  includes.chroot/        Fichiers copiés tels quels dans l'image (réglages GNOME, scripts teranga-*)
 docs/                     Charte graphique et présentation
 experimental/from-scratch Pipeline « Linux from scratch » (non fonctionnel, voir son README)
 ```
 
-Les paquets absents de Debian sont signalés et ignorés au moment du build ; seuls quelques paquets indispensables (Hyprland, SDDM, Calamares…) arrêtent le build s'ils manquent.
+Le thème suit l'heure : **Djolof** (clair, accent or) le jour, **Harmattan** (sombre, accent orange) le soir.
+
+Les paquets absents de Debian sont signalés et ignorés au moment du build ; seuls quelques paquets indispensables (GNOME, GDM, Calamares…) arrêtent le build s'ils manquent.
 
 ## 🛡️ Sécurité
 

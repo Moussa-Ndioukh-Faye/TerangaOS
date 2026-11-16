@@ -22,7 +22,7 @@ CODENAME="Djolof"
 
 # Paquets sans lesquels l'ISO n'a pas de sens : le build s'arrête s'ils
 # n'existent pas dans la version de Debian ciblée.
-REQUIRED_PACKAGES="live-boot live-config hyprland waybar kitty sddm calamares"
+REQUIRED_PACKAGES="live-boot live-config gnome-core gdm3 calamares"
 
 BUILD_ROOT="$TERANGA_DIR/build"
 LOG_FILE=""
@@ -312,7 +312,7 @@ Commandes :
   help       Afficher cette aide
 
 Options :
-  --variant  core  : Hyprland + outils de développement      (~2,5 Go)
+  --variant  core  : GNOME 48 + outils de développement      (~3 Go)
              cyber : core + cybersécurité, Metasploit          (~4 Go)
              full  : cyber + IA (Ollama, PyTorch CPU, Jupyter) (~7 Go)  [défaut]
 

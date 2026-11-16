@@ -3,7 +3,7 @@
 Bienvenue dans la documentation hors-ligne de TérangaOS. Ce guide vous aidera à maîtriser votre système même sans connexion internet.
 
 ## 1. 🇸🇳 Services Sénégal
-Pour accéder aux services locaux, utilisez le raccourci `SUPER + S`. 
+Pour accéder aux services locaux, utilisez le raccourci `SUPER + ALT + S` ou l’icône « Services Sénégal » du dock. 
 Cela ouvre un menu interactif pour :
 - Payer vos factures (Senelec, Sen'Eau)
 - Accéder aux portails administratifs (Gouv.sn, Télédac)
@@ -38,11 +38,21 @@ Votre OS est une "Optimized Edition". Il utilise :
 - **ZRAM :** Pour une meilleure gestion de la mémoire.
 - **Réglages réseau et mémoire** adaptés (voir `/etc/sysctl.d/99-terangaos.conf`).
 
-## 6. 💾 Installer sur le disque
-Ouvrez le menu (`SUPER + R`) et lancez **Installer TérangaOS**.
+## 6. ⌨️ Raccourcis
+| Raccourci | Action |
+| :--- | :--- |
+| `SUPER` | Vue d'ensemble et recherche d'applications |
+| `SUPER + Entrée` | Terminal |
+| `SUPER + ALT + S` | Services sénégalais |
+| `SUPER + F1` | Ce guide |
+
+Mode économie de données : application **Économie de données** (marque la connexion comme limitée).
+
+## 7. 💾 Installer sur le disque
+Cliquez sur **Installer TérangaOS** dans le dock (ou cherchez-le avec la touche `SUPER`).
 Dans la session live, l'utilisateur est `teranga` et le mot de passe `live`.
 
-## 7. ✅ Vérifier le système
+## 8. ✅ Vérifier le système
 ```bash
 teranga-check
 ```

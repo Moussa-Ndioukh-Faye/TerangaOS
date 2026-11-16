@@ -1,33 +1,41 @@
 #!/bin/bash
-# TérangaOS — Script Mode Économie de Données
+# TérangaOS — mode économie de données
+# Marque la connexion active comme « limitée » (metered) : GNOME Logiciels
+# et les mises à jour automatiques arrêtent alors de télécharger en fond.
 
-STATE_FILE="/tmp/teranga-data-saver"
-
-toggle() {
-    if [ -f "$STATE_FILE" ]; then
-        # Désactiver le mode économie
-        rm "$STATE_FILE"
-        notify-send "TérangaOS" "Mode Économie de Données DÉSACTIVÉ" -i network-transmit-receive
-        # Réactiver les services gourmands si nécessaire
-    else
-        # Activer le mode économie
-        touch "$STATE_FILE"
-        notify-send "TérangaOS" "Mode Économie de Données ACTIVÉ" -i network-offline
-        # Actions : Bloquer les updates, suspendre Ollama sync, etc.
-        pkill -f "ollama serve" || true
-    fi
+active_connection() {
+    nmcli -t -f NAME,DEVICE connection show --active | awk -F: '$2 != "lo" {print $1; exit}'
 }
 
 status() {
-    if [ -f "$STATE_FILE" ]; then
+    local con
+    con=$(active_connection)
+    if [ -n "$con" ] && [ "$(nmcli -g connection.metered connection show "$con")" = "yes" ]; then
         echo "📡 ÉCO"
     else
-        echo "🌐 FULL"
+        echo "🌐 NORMAL"
     fi
 }
 
-case "$1" in
+toggle() {
+    local con
+    con=$(active_connection)
+    if [ -z "$con" ]; then
+        notify-send -i network-offline "TérangaOS" "Aucune connexion active"
+        return 1
+    fi
+    if [ "$(nmcli -g connection.metered connection show "$con")" = "yes" ]; then
+        nmcli connection modify "$con" connection.metered no
+        notify-send -i network-transmit-receive "TérangaOS" "Économie de données DÉSACTIVÉE ($con)"
+    else
+        nmcli connection modify "$con" connection.metered yes
+        pkill -f "ollama serve" 2>/dev/null || true
+        notify-send -i network-cellular-signal-weak "TérangaOS" "Économie de données ACTIVÉE ($con)"
+    fi
+}
+
+case "${1:-toggle}" in
     toggle) toggle ;;
     status) status ;;
-    *) echo "Usage: $0 {toggle|status}" ;;
+    *) echo "Usage : $0 {toggle|status}" ;;
 esac

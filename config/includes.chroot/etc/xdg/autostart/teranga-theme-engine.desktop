@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Thème TérangaOS
+Comment=Thème Djolof (jour) / Harmattan (nuit) et jours fériés
+Exec=teranga-theme-engine --quiet
+OnlyShowIn=GNOME;
+NoDisplay=true
+X-GNOME-Autostart-Delay=5

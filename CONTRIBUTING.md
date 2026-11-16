@@ -21,7 +21,7 @@ Voir la section « Organisation du dépôt » du [README](README.md).
 - Chaque hook doit être idempotent.
 
 ### Fichiers de l'image (`config/includes.chroot/`)
-- Copiés tels quels dans le système. Les dotfiles vont dans `etc/skel/` (ils servent à l'utilisateur live et aux utilisateurs créés à l'installation).
+- Copiés tels quels dans le système. Les réglages GNOME par défaut sont dans `etc/dconf/db/local.d/` ; les dotfiles dans `etc/skel/`.
 
 ### Scripts
 - Bash, `set -euo pipefail`, fonctions documentées, pas de chemins absolus vers votre machine.

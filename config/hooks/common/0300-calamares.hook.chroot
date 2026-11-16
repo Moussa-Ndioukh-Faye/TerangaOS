@@ -43,7 +43,7 @@ if [ -f /etc/calamares/modules/users.conf ]; then
     fi
 fi
 
-# Lanceur "Installer TérangaOS" (visible dans Wofi, SUPER + R)
+# Lanceur "Installer TérangaOS" (menu des applications et dock GNOME)
 LAUNCHER=calamares
 command -v install-debian >/dev/null 2>&1 && LAUNCHER=install-debian
 cat > /usr/share/applications/install-terangaos.desktop <<EOF
