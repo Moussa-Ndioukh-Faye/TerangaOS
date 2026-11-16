@@ -1,4 +1,4 @@
-python3-numpy
-python3-pandas
-python3-scipy
-python3-matplotlib
+# IA — bibliothèques scientifiques Debian (variante full)
+# PyTorch, Jupyter, LangChain… sont installés dans /opt/terangaos/ai
+# par config/hooks/full/ (environnement virtuel, version CPU).
+python3-numpy python3-pandas python3-scipy python3-matplotlib python3-sklearn

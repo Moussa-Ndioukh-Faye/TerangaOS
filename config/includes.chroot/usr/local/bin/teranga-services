@@ -1,0 +1,21 @@
+#!/bin/bash
+# TérangaOS — accès rapide aux services sénégalais (SUPER + S)
+CHOIX=$(printf '%s\n' \
+    "1. Service Public (gouv.sn)" \
+    "2. Teledac (urbanisme)" \
+    "3. Senelec (factures)" \
+    "4. Sen'Eau (eau)" \
+    "5. Wave" \
+    "6. ESP / UCAD" \
+    "7. Actualités (RTS)" \
+    | wofi --show dmenu --prompt "Service sénégalais :")
+
+case "$CHOIX" in
+    1.*) xdg-open "https://www.service-public.gouv.sn" ;;
+    2.*) xdg-open "https://www.teledac.sn" ;;
+    3.*) xdg-open "https://www.senelec.sn" ;;
+    4.*) xdg-open "https://www.seneau.sn" ;;
+    5.*) xdg-open "https://www.wave.com" ;;
+    6.*) xdg-open "https://esp.sn" ;;
+    7.*) xdg-open "https://www.rts.sn" ;;
+esac

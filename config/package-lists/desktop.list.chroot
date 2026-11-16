@@ -1,17 +1,11 @@
+# TérangaOS — bureau Hyprland (paquets Debian, plus de compilation depuis les sources)
+hyprland hyprpaper hyprlock hypridle
+xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
+xwayland wayland-utils qtwayland5 qt6-wayland
+waybar wofi mako-notifier wlogout swaybg
+kitty thunar thunar-volman
+grim slurp swappy wl-clipboard cliphist brightnessctl
+imv mpv pavucontrol blueman
+policykit-1-gnome mate-polkit
 sddm sddm-theme-debian-elarun
-wayland-utils xwayland
-waybar
-wofi
-mako
-swaybg
-grim
-slurp
-wl-clipboard
-imv
-mpv
-pavucontrol
-blueman
-thunar gvfs-backends
-policykit-1-gnome
-qt5-wayland qt6-wayland
-swappy
+adwaita-icon-theme papirus-icon-theme gnome-themes-extra

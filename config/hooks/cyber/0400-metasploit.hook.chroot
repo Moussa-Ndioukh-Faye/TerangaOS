@@ -1,0 +1,30 @@
+#!/bin/bash
+# TérangaOS — outils de cybersécurité hors Debian (variantes cyber et full)
+set -euo pipefail
+
+echo "[TERANGA] Hook 0400 : cybersécurité"
+
+# Wireshark : capture autorisée pour les membres du groupe "wireshark"
+if dpkg -s wireshark-common >/dev/null 2>&1; then
+    echo "wireshark-common wireshark-common/install-setuid boolean true" | debconf-set-selections
+    DEBIAN_FRONTEND=noninteractive dpkg-reconfigure wireshark-common
+fi
+
+# Metasploit (dépôt officiel Rapid7). Échec non bloquant : l'ISO est
+# construite sans Metasploit plutôt que d'échouer.
+install_metasploit() {
+    curl -fsSL https://apt.metasploit.com/metasploit-framework.gpg.key \
+        | gpg --dearmor > /usr/share/keyrings/metasploit-framework.gpg
+    echo "deb [signed-by=/usr/share/keyrings/metasploit-framework.gpg] https://apt.metasploit.com/ buster main" \
+        > /etc/apt/sources.list.d/metasploit-framework.list
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y metasploit-framework
+}
+
+if install_metasploit; then
+    echo "[OK] Metasploit installé"
+else
+    echo "[WARN] Metasploit non installé (dépôt Rapid7 injoignable ou incompatible)"
+    rm -f /etc/apt/sources.list.d/metasploit-framework.list /usr/share/keyrings/metasploit-framework.gpg
+    apt-get update || true
+fi

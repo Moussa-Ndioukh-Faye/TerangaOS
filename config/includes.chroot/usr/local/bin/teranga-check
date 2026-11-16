@@ -1,0 +1,34 @@
+#!/bin/bash
+# TérangaOS — vérifie que les outils de chaque pilier sont présents
+
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+VARIANT=$(cat /etc/terangaos/variant 2>/dev/null || echo inconnue)
+
+check_bin() {
+    if command -v "$1" >/dev/null 2>&1 || [ -x "/opt/terangaos/ai/bin/$1" ]; then
+        echo -e "${GREEN}[OK]${NC}       $1"
+    else
+        echo -e "${RED}[MANQUANT]${NC} $1"
+    fi
+}
+
+echo -e "${YELLOW}TérangaOS — variante : $VARIANT${NC}"
+
+echo -e "\n--- Interface ---"
+for b in Hyprland waybar wofi kitty teranga-services; do check_bin "$b"; done
+
+echo -e "\n--- Développement ---"
+for b in python3 node git docker; do check_bin "$b"; done
+
+if [ "$VARIANT" = cyber ] || [ "$VARIANT" = full ]; then
+    echo -e "\n--- Cybersécurité ---"
+    for b in nmap wireshark hashcat sqlmap msfconsole; do check_bin "$b"; done
+fi
+
+if [ "$VARIANT" = full ]; then
+    echo -e "\n--- Intelligence artificielle ---"
+    for b in ollama jupyter-lab; do check_bin "$b"; done
+fi

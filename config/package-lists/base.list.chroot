@@ -1,14 +1,18 @@
-systemd systemd-sysv dbus
-pipewire pipewire-audio pipewire-alsa wireplumber
-network-manager network-manager-gnome
-polkitd polkit-1
-gvfs udisks2 udiskie
+# TérangaOS — système de base (toutes les variantes)
+# Un paquet indisponible dans Debian est signalé et ignoré par build.sh,
+# sauf s'il figure dans REQUIRED_PACKAGES (voir build.sh).
+systemd systemd-sysv dbus dbus-user-session
+locales tzdata sudo
+zsh bash-completion less nano
+pipewire pipewire-audio pipewire-alsa pipewire-pulse wireplumber
+network-manager network-manager-gnome bluez iw wpasupplicant
+polkitd
+gvfs gvfs-backends udisks2 udiskie
 xdg-utils xdg-user-dirs
-fonts-noto fonts-noto-cjk fonts-font-awesome
-curl wget git unzip tar gzip
-bash-completion zsh
-htop btop neofetch
-thunar thunar-volman
-firefox-esr
+fonts-noto-core fonts-noto-color-emoji fonts-font-awesome fonts-jetbrains-mono
+ca-certificates gnupg curl wget git unzip zip
+htop btop fastfetch glow
+firefox-esr firefox-esr-l10n-fr
 libnotify-bin
-glow
+zram-tools
+python3

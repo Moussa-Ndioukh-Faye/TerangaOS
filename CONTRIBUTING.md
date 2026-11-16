@@ -4,49 +4,35 @@ Merci de votre intérêt pour TérangaOS ! Ce document définit les standards et
 
 ## Structure du projet
 
-```
-TerangaOS/
-├── config/                  # Configuration live-build
-│   ├── package-lists/       # Paquets par domaine (base, desktop, live, ai, dev, cybersec)
-│   ├── includes.chroot/     # Fichiers injectés dans l'image
-│   └── hooks/live/          # Hooks générés (NE PAS commiter — voir scripts/write-hooks.sh)
-├── scripts/                 # Scripts de configuration
-│   └── write-hooks.sh       # GÉNÈRE les hooks dans config/hooks/live/
-├── live-build-config/       # Build directory (généré par build.sh, NE PAS commiter)
-├── build.sh                 # Build principal via live-build
-├── build-all.sh             # Build complet from scratch
-├── build-kernel.sh          # Compilation du kernel Linux
-├── build-rootfs.sh          # Construction rootfs
-├── build-toolchain.sh       # Toolchain GCC+glibc
-├── build-iso.sh             # Génération ISO manuelle
-└── meta-terangaos/          # Layer Yocto/OpenEmbedded
-```
+Voir la section « Organisation du dépôt » du [README](README.md).
 
 ## Conventions
 
-### Package lists
-- Un fichier par domaine : `base.list.chroot`, `desktop.list.chroot`, `dev.list.chroot`, etc.
-- Préfixe domaine dans le nom du fichier
-- Un paquet par ligne, ou groupé par fonction si inséparable
+### Listes de paquets (`config/package-lists/`)
+- Un fichier par domaine : `base`, `desktop`, `live`, `installer`, `dev`, `cybersec`, `ai`.
+- Noms de paquets **Debian 13 (trixie)**, séparés par des espaces ou des retours à la ligne ; `#` pour les commentaires.
+- Un paquet introuvable est ignoré avec un avertissement. S'il est indispensable, ajoutez-le à `REQUIRED_PACKAGES` dans `build.sh`.
 
-### Hooks
-- Format : `NNNN-description.hook.chroot` (NNNN = numéro d'ordre sur 4 chiffres)
-- Les hooks sont GÉNÉRÉS par `scripts/write-hooks.sh` — ne pas les modifier directement dans `config/hooks/live/`
-- Toujours modifier `scripts/write-hooks.sh` puis le regénerer
-- Chaque hook doit être idempotent (exécutable plusieurs fois sans effet de bord)
-- Utiliser `set -e` en début de hook
+### Hooks (`config/hooks/<common|cyber|full>/`)
+- Format : `NNNN-description.hook.chroot` (NNNN = ordre d'exécution sur 4 chiffres, commun à tous les dossiers).
+- `common/` : toutes les variantes · `cyber/` : cyber et full · `full/` : full uniquement.
+- Les hooks sont de vrais fichiers versionnés (il n'y a plus de générateur) : modifiez-les directement et gardez-les exécutables (`chmod +x`).
+- `set -euo pipefail` en tête. Tout ce qui télécharge hors des dépôts Debian doit pouvoir échouer sans bloquer le build (afficher `[WARN]`).
+- Chaque hook doit être idempotent.
+
+### Fichiers de l'image (`config/includes.chroot/`)
+- Copiés tels quels dans le système. Les dotfiles vont dans `etc/skel/` (ils servent à l'utilisateur live et aux utilisateurs créés à l'installation).
 
 ### Scripts
-- `scripts/` pour les outils de configuration
-- `build-*.sh` pour les pipelines de build
-- Toujours utiliser `set -e` et documenter les fonctions
+- Bash, `set -euo pipefail`, fonctions documentées, pas de chemins absolus vers votre machine.
+- Avant de proposer une modification : `bash -n` et `shellcheck -S warning` sur les scripts modifiés (la CI le fait aussi).
 
 ## Process de contribution
 
 1. **Fork** le dépôt
 2. **Créez une branche** : `git checkout -b feature/ma-modification`
 3. **Commitez** vos changements (messages clairs en anglais ou français)
-4. **Testez** : exécutez `./build.sh deps && ./build.sh prepare` au minimum
+4. **Testez** : au minimum `sudo ./build.sh prepare --variant core`, idéalement `./build-docker.sh --variant core`
 5. **Ouvrez une Pull Request** vers `main`
 
 ## Standards de code

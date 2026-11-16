@@ -1,13 +1,7 @@
 # Installateur graphique Calamares
-calamares
-calamares-settings-debian
-# Dépendances et utilitaires disques
-parted
-util-linux
-grub-pc
-grub-efi-amd64
-# Support système de fichiers
-dosfstools
-ntfs-3g
-btrfs-progs
-xfsprogs
+calamares calamares-settings-debian
+# Outils disques et systèmes de fichiers
+parted dosfstools ntfs-3g btrfs-progs xfsprogs cryptsetup
+# Chargeurs d'amorçage : uniquement les variantes "-bin", qui peuvent
+# coexister (grub-pc et grub-efi-amd64 sont en conflit entre eux)
+grub-pc-bin grub-efi-amd64-bin grub-efi-amd64-signed shim-signed efibootmgr

@@ -1,0 +1,11 @@
+#!/bin/sh
+# TérangaOS — connexion automatique dans la session live uniquement.
+# Ce script n'est exécuté que par live-config (au démarrage du live) :
+# un système installé par Calamares garde un écran de connexion normal.
+mkdir -p /etc/sddm.conf.d
+cat > /etc/sddm.conf.d/zz-live-autologin.conf <<EOC
+[Autologin]
+User=${LIVE_USERNAME:-teranga}
+Session=hyprland.desktop
+Relogin=false
+EOC

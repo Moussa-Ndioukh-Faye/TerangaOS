@@ -1,4 +1,2 @@
-live-boot
-live-config
-live-config-systemd
-systemd-sysv
+# Session live
+live-boot live-config live-config-systemd
