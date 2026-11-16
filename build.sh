@@ -226,7 +226,7 @@ configure_live_build() {
             --firmware-chroot true \
             --firmware-binary true \
             --linux-packages "linux-image linux-headers" \
-            --bootappend-live "boot=live components quiet splash locales=fr_FR.UTF-8 keyboard-layouts=fr timezone=Africa/Dakar" \
+            --bootappend-live "boot=live components quiet splash username=teranga hostname=terangaos user-fullname=Teranga locales=fr_FR.UTF-8 keyboard-layouts=fr timezone=Africa/Dakar" \
             --iso-application "TerangaOS" \
             --iso-publisher "ESP-UCAD-Dakar-TerangaOS-Project" \
             --iso-volume "TERANGAOS_${VARIANT^^}" \

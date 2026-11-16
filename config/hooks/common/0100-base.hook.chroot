@@ -61,4 +61,20 @@ systemctl enable gdm3 || true
 # --- Réglages GNOME par défaut (/etc/dconf/db/local.d) -----------------------
 dconf update
 
+# --- Écran de connexion GDM ---------------------------------------------------
+# Connexion automatique de l'utilisateur live. Sur un système installé,
+# le module "displaymanager" de Calamares réécrit ces deux valeurs selon
+# le choix fait pendant l'installation.
+GDM_CONF=/etc/gdm3/daemon.conf
+if [ -f "$GDM_CONF" ]; then
+    sed -i -e '/^#\? *AutomaticLoginEnable *=/d' -e '/^#\? *AutomaticLogin *=/d' "$GDM_CONF"
+    sed -i '/^\[daemon\]/a AutomaticLogin=teranga' "$GDM_CONF"
+    sed -i '/^\[daemon\]/a AutomaticLoginEnable=true' "$GDM_CONF"
+fi
+# Retire le logo Debian de l'écran de connexion
+if [ -f /etc/gdm3/greeter.dconf-defaults ]; then
+    sed -i "s|^logo=.*|logo=''|" /etc/gdm3/greeter.dconf-defaults
+    dconf update
+fi
+
 echo "[OK] Configuration de base terminée"

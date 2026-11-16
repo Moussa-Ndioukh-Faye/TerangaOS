@@ -1,9 +1,0 @@
-#!/bin/sh
-# TérangaOS — connexion automatique dans la session live uniquement.
-# Exécuté par live-config au démarrage du live : un système installé par
-# Calamares garde un écran de connexion normal.
-CONF=/etc/gdm3/daemon.conf
-[ -f "$CONF" ] || exit 0
-grep -q '^AutomaticLoginEnable=true' "$CONF" && exit 0
-sed -i "/^\[daemon\]/a AutomaticLogin=${LIVE_USERNAME:-teranga}" "$CONF"
-sed -i "/^\[daemon\]/a AutomaticLoginEnable=true" "$CONF"
