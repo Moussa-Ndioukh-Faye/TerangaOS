@@ -1,0 +1,13 @@
+# Installateur graphique Calamares
+calamares
+calamares-settings-debian
+# Dépendances et utilitaires disques
+parted
+util-linux
+grub-pc
+grub-efi-amd64
+# Support système de fichiers
+dosfstools
+ntfs-3g
+btrfs-progs
+xfsprogs

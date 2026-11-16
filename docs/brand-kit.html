@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TérangaOS — Brand Kit & Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold:     #FFBE00;
+  --gold-dim: #C89000;
+  --terra:    #C85200;
+  --ember:    #FF7A30;
+  --bg:       #0a0702;
+  --bg2:      #120e06;
+  --bg3:      #1a1408;
+  --cream:    #F5EDD8;
+  --muted:    rgba(245,237,216,.35);
+  --border:   rgba(255,190,0,.1);
+  --border2:  rgba(255,190,0,.2);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Syne', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CUSTOM CURSOR */
+.cursor {
+  position: fixed; width: 10px; height: 10px;
+  background: var(--gold); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform .1s, width .2s, height .2s, opacity .2s;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  position: fixed; width: 32px; height: 32px;
+  border: 1px solid rgba(255,190,0,.5);
+  border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform .25s ease, width .2s, height .2s;
+}
+
+/* NOISE OVERLAY */
+body::before {
+  content:''; position:fixed; inset:0; z-index:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  background-size: 200px;
+  pointer-events: none;
+  opacity: .6;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 3rem;
+  background: rgba(10,7,2,.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 900;
+  color: var(--gold);
+  letter-spacing: .02em;
+}
+.nav-links { display: flex; gap: 2rem; }
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem; color: var(--muted);
+  text-decoration: none; letter-spacing: .15em; text-transform: uppercase;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--gold); }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 8rem 2rem 5rem;
+  position: relative;
+}
+
+/* Kente-inspired geometric bg */
+.hero-geo {
+  position: absolute; inset: 0; overflow: hidden;
+  opacity: .07;
+}
+.hero-geo svg { width: 100%; height: 100%; }
+
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--gold); opacity: .7;
+  margin-bottom: 1.8rem;
+  animation: up .8s ease both;
+}
+
+.hero-name {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3.5rem, 12vw, 9rem);
+  font-weight: 900; line-height: .9;
+  color: var(--gold);
+  animation: up .8s .1s ease both;
+  position: relative;
+}
+.hero-name em {
+  font-style: italic;
+  color: var(--cream);
+  font-weight: 700;
+}
+
+.hero-os-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(.9rem, 2.5vw, 1.5rem);
+  color: var(--terra);
+  letter-spacing: .1em;
+  margin-top: .3rem;
+  animation: up .8s .15s ease both;
+}
+
+.hero-divider {
+  width: 80px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 2rem auto;
+  animation: up .8s .2s ease both;
+}
+
+.hero-tagline {
+  font-size: clamp(.9rem, 2vw, 1.1rem);
+  color: var(--muted);
+  max-width: 520px;
+  line-height: 1.7;
+  animation: up .8s .25s ease both;
+}
+
+.hero-pillars {
+  display: flex; gap: .8rem; flex-wrap: wrap;
+  justify-content: center; margin-top: 2.5rem;
+  animation: up .8s .3s ease both;
+}
+.h-pill {
+  padding: .45rem 1.1rem; border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+  border: 1px solid;
+}
+.h-pill-1 { color: #ff6b6b; border-color: rgba(255,107,107,.25); background: rgba(255,107,107,.06); }
+.h-pill-2 { color: var(--gold); border-color: rgba(255,190,0,.25); background: rgba(255,190,0,.06); }
+.h-pill-3 { color: #7ec8ff; border-color: rgba(126,200,255,.25); background: rgba(126,200,255,.06); }
+
+.scroll-down {
+  position: absolute; bottom: 2.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .55rem; color: var(--muted);
+  letter-spacing: .2em; text-transform: uppercase;
+  animation: pulse 2.5s ease infinite;
+  display: flex; flex-direction: column; align-items: center; gap: .4rem;
+}
+.scroll-arrow { width: 16px; height: 16px; border-right: 1px solid var(--gold-dim); border-bottom: 1px solid var(--gold-dim); transform: rotate(45deg); }
+
+/* ── SECTIONS ── */
+section { position: relative; z-index: 1; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 5rem 2rem; }
+
+.sec-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--gold); opacity: .6;
+  display: flex; align-items: center; gap: .8rem;
+  margin-bottom: 3rem;
+}
+.sec-label::before { content:''; display:block; width:32px; height:1px; background: var(--gold-dim); opacity: .4; }
+
+.sec-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900; line-height: 1.05;
+  color: var(--cream);
+  margin-bottom: 1rem;
+}
+.sec-title span { color: var(--gold); }
+
+/* ── LOGO SECTION ── */
+#logo { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+.logo-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 2.5rem; }
+
+.logo-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  display: flex; flex-direction: column; align-items: center; gap: 1.2rem;
+  transition: border-color .3s, transform .3s;
+}
+.logo-card:hover { border-color: var(--gold-dim); transform: translateY(-3px); }
+.logo-card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem; letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ── PALETTE SECTION ── */
+.palette-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-top: 2.5rem; }
+.color-chip {
+  border-radius: 10px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.06);
+  transition: transform .2s;
+}
+.color-chip:hover { transform: scale(1.03); }
+.chip-block { height: 80px; }
+.chip-info { padding: .8rem; background: var(--bg3); }
+.chip-name { font-size: .75rem; font-weight: 600; color: var(--cream); margin-bottom: .2rem; }
+.chip-hex { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--muted); }
+.chip-role { font-size: .6rem; color: var(--muted); opacity: .7; margin-top: .2rem; }
+
+/* ── TYPOGRAPHY ── */
+.typo-showcase { display: grid; gap: 1.5rem; margin-top: 2.5rem; }
+.typo-row {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1.5rem 2rem;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 2rem;
+  flex-wrap: wrap;
+}
+.typo-sample { flex: 1; min-width: 200px; }
+.typo-meta { text-align: right; min-width: 140px; }
+.typo-meta-name { font-size: .65rem; font-weight: 700; color: var(--gold); }
+.typo-meta-info { font-family: 'JetBrains Mono', monospace; font-size: .55rem; color: var(--muted); margin-top: .2rem; line-height: 1.6; }
+
+/* ── ARCHITECTURE / TOOLSET ── */
+#toolset { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+.pillars-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 2.5rem; }
+
+.pillar-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+  transition: transform .25s, border-color .25s;
+}
+.pillar-card:hover { transform: translateY(-4px); border-color: var(--gold-dim); }
+
+.pillar-header {
+  padding: 1.5rem 1.5rem 1rem;
+  display: flex; align-items: center; gap: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.pillar-icon { font-size: 1.4rem; }
+.pillar-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--cream); }
+.pillar-sub { font-family: 'JetBrains Mono', monospace; font-size: .58rem; color: var(--muted); letter-spacing: .1em; }
+
+.pillar-tools { padding: 1.2rem 1.5rem 1.5rem; display: flex; flex-direction: column; gap: .5rem; }
+.tool-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .45rem .7rem;
+  background: rgba(255,190,0,.04);
+  border-radius: 6px;
+  border: 1px solid rgba(255,190,0,.06);
+  transition: background .2s, border-color .2s;
+}
+.tool-row:hover { background: rgba(255,190,0,.08); border-color: rgba(255,190,0,.15); }
+.tool-name { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--cream); }
+.tool-desc { font-size: .6rem; color: var(--muted); }
+.tool-tag {
+  font-family: 'JetBrains Mono', monospace; font-size: .5rem; padding: .2rem .5rem;
+  border-radius: 4px; white-space: nowrap; letter-spacing: .08em;
+}
+.tag-sec   { background: rgba(255,80,80,.1);   color: #ff8080;  border: 1px solid rgba(255,80,80,.15); }
+.tag-dev   { background: rgba(255,190,0,.1);   color: var(--gold); border: 1px solid rgba(255,190,0,.15); }
+.tag-ai    { background: rgba(126,200,255,.1); color: #7ec8ff; border: 1px solid rgba(126,200,255,.15); }
+.tag-base  { background: rgba(255,255,255,.05); color: var(--muted); border: 1px solid rgba(255,255,255,.08); }
+
+/* ── ROADMAP ── */
+.roadmap { position: relative; margin-top: 2.5rem; }
+.roadmap-line {
+  position: absolute; left: 18px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, var(--gold), var(--terra), transparent);
+  opacity: .3;
+}
+.phase { display: flex; gap: 1.5rem; margin-bottom: 2rem; padding-left: .5rem; }
+.phase-dot {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: .65rem; font-weight: 600;
+  border: 1px solid var(--gold-dim); color: var(--gold);
+  background: var(--bg3); z-index: 1;
+}
+.phase-body { flex: 1; padding-top: .4rem; }
+.phase-title { font-weight: 700; color: var(--cream); margin-bottom: .3rem; font-size: .9rem; }
+.phase-desc { font-size: .75rem; color: var(--muted); line-height: 1.7; }
+.phase-tech {
+  margin-top: .6rem; display: flex; flex-wrap: wrap; gap: .4rem;
+}
+.phase-chip {
+  font-family: 'JetBrains Mono', monospace; font-size: .55rem;
+  padding: .2rem .6rem; border-radius: 4px;
+  background: rgba(255,190,0,.07); color: var(--gold-dim);
+  border: 1px solid rgba(255,190,0,.12);
+}
+
+/* ── MOCKUPS ── */
+#mockups { background: var(--bg2); border-top: 1px solid var(--border); }
+
+.mockup-row { display: grid; gap: 1.5rem; margin-top: 2.5rem; }
+
+.boot-screen {
+  background: #000; border: 1px solid rgba(255,190,0,.15);
+  border-radius: 12px; padding: 1.5rem 2rem;
+  font-family: 'JetBrains Mono', monospace; font-size: .65rem; line-height: 2;
+}
+.b-ok   { color: #4fffaa; }
+.b-info { color: #7ec8ff; }
+.b-gold { color: var(--gold); }
+.b-muted { color: rgba(255,255,255,.3); }
+
+.desktop-mock {
+  border: 1px solid rgba(255,190,0,.15);
+  border-radius: 12px; overflow: hidden;
+}
+.desktop-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .5rem 1rem; font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem; color: rgba(255,190,0,.5);
+  background: rgba(255,190,0,.05); border-bottom: 1px solid var(--border);
+}
+.desktop-wallpaper {
+  height: 180px;
+  background: radial-gradient(ellipse at 30% 60%, rgba(200,82,0,.25), transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(255,190,0,.12), transparent 60%),
+              #0a0702;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: .5rem;
+}
+.wp-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem; font-weight: 900; color: var(--gold); opacity: .85;
+}
+.wp-ver {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .55rem; color: var(--muted); letter-spacing: .25em; text-transform: uppercase;
+}
+.desktop-dock {
+  display: flex; gap: .6rem; padding: .6rem 1rem;
+  background: rgba(0,0,0,.6); border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.dock-icon {
+  width: 30px; height: 30px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .85rem; background: rgba(255,190,0,.08);
+  border: 1px solid rgba(255,190,0,.1);
+  transition: transform .15s, background .15s;
+  cursor: default;
+}
+.dock-icon:hover { transform: translateY(-4px) scale(1.1); background: rgba(255,190,0,.15); }
+
+/* ── GRUB MOCKUP ── */
+.grub-mock {
+  background: #000; border: 1px solid rgba(255,190,0,.15);
+  border-radius: 12px; overflow: hidden;
+}
+.grub-header {
+  background: linear-gradient(135deg, rgba(200,82,0,.3), rgba(255,190,0,.1));
+  padding: 1.5rem; text-align: center;
+}
+.grub-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--gold); }
+.grub-sub { font-family: 'JetBrains Mono', monospace; font-size: .55rem; color: var(--muted); letter-spacing: .2em; margin-top: .3rem; }
+.grub-entries { padding: 1rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: .65rem; }
+.grub-entry { padding: .4rem .8rem; border-radius: 4px; color: var(--muted); }
+.grub-entry.active { background: var(--gold); color: #000; font-weight: 600; }
+.grub-footer {
+  padding: .8rem 1.5rem; border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace; font-size: .55rem;
+  color: var(--muted); display: flex; justify-content: space-between;
+}
+
+/* ── GLOBAL DIVIDERS ── */
+.sep { height: 1px; background: var(--border); }
+
+/* ── ANIMATIONS ── */
+@keyframes up {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%,100% { opacity:.3; }
+  50% { opacity:.7; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Observe-based reveal */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; opacity: .4; }
+
+@media (max-width: 600px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .container { padding: 3.5rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Téranga<span style="color:var(--cream)">OS</span></div>
+  <div class="nav-links">
+    <a href="#logo">Logo</a>
+    <a href="#palette">Palette</a>
+    <a href="#typo">Typographie</a>
+    <a href="#toolset">Outils</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#mockups">Mockups</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <!-- Geometric kente-inspired bg -->
+  <div class="hero-geo">
+    <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="kente" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+          <rect x="0" y="0" width="80" height="80" fill="none"/>
+          <line x1="0" y1="20" x2="80" y2="20" stroke="#FFBE00" stroke-width="1"/>
+          <line x1="0" y1="60" x2="80" y2="60" stroke="#C85200" stroke-width=".5"/>
+          <line x1="20" y1="0" x2="20" y2="80" stroke="#FFBE00" stroke-width=".5"/>
+          <line x1="60" y1="0" x2="60" y2="80" stroke="#C85200" stroke-width="1"/>
+          <rect x="20" y="20" width="40" height="40" fill="none" stroke="#FFBE00" stroke-width=".5" opacity=".5"/>
+          <circle cx="40" cy="40" r="5" fill="none" stroke="#C85200" stroke-width=".8"/>
+        </pattern>
+      </defs>
+      <rect width="1200" height="800" fill="url(#kente)"/>
+      <radial-gradient id="fade" cx="50%" cy="50%" r="50%"/>
+      <rect width="1200" height="800" fill="radial-gradient(ellipse at 50% 50%, transparent 30%, var(--bg))"/>
+    </svg>
+  </div>
+
+  <p class="hero-eyebrow">ESP / UCAD · Dakar, Sénégal · Projet L2 GLSI</p>
+
+  <h1 class="hero-name">Téranga<em>OS</em></h1>
+  <p class="hero-os-tag">GNU / Linux · Distro Africaine</p>
+
+  <div class="hero-divider"></div>
+
+  <p class="hero-tagline">
+    <em>"Dalal ak diam"</em> — Bienvenue en paix.<br>
+    L'OS qui accueille hackers, développeurs et chercheurs en IA.
+  </p>
+
+  <div class="hero-pillars">
+    <span class="h-pill h-pill-1">🔒 Cybersécurité</span>
+    <span class="h-pill h-pill-2">⚡ Développement</span>
+    <span class="h-pill h-pill-3">🤖 Intelligence Artificielle</span>
+  </div>
+
+  <div class="scroll-down">
+    <span>Découvrir</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- LOGO -->
+<section id="logo">
+  <div class="container">
+    <p class="sec-label reveal">Identité — Logo</p>
+    <h2 class="sec-title reveal">Le <span>symbole</span> TérangaOS</h2>
+    <p class="reveal" style="font-size:.85rem; color:var(--muted); max-width:520px; line-height:1.7; margin-bottom:0;">
+      L'hexagone est au cœur du logo — six faces, trois piliers × deux axes (offensive/défensive, build/deploy, local/cloud). Inspiré des motifs géométriques wolof.
+    </p>
+
+    <div class="logo-grid">
+      <!-- Variant 1: Full color on dark -->
+      <div class="logo-card reveal">
+        <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+          <polygon points="50,5 91,27.5 91,72.5 50,95 9,72.5 9,27.5" stroke="#FFBE00" stroke-width="2" fill="rgba(255,190,0,.04)"/>
+          <polygon points="50,18 78,34 78,66 50,82 22,66 22,34" stroke="#C85200" stroke-width="1.2" fill="none" stroke-dasharray="3 2"/>
+          <!-- T stylisé -->
+          <line x1="35" y1="38" x2="65" y2="38" stroke="#FFBE00" stroke-width="3" stroke-linecap="round"/>
+          <line x1="50" y1="38" x2="50" y2="65" stroke="#FFBE00" stroke-width="3" stroke-linecap="round"/>
+          <!-- dots at hexagon vertices -->
+          <circle cx="50" cy="5" r="2.5" fill="#FFBE00"/>
+          <circle cx="91" cy="27.5" r="2" fill="#C85200"/>
+          <circle cx="91" cy="72.5" r="2" fill="#C85200"/>
+          <circle cx="50" cy="95" r="2.5" fill="#FFBE00"/>
+          <circle cx="9" cy="72.5" r="2" fill="#C85200"/>
+          <circle cx="9" cy="27.5" r="2" fill="#C85200"/>
+        </svg>
+        <div class="logo-card-label">Couleur / fond sombre</div>
+      </div>
+
+      <!-- Variant 2: Wordmark -->
+      <div class="logo-card reveal" style="min-width:220px;">
+        <div style="display:flex; align-items:center; gap:1rem;">
+          <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
+            <polygon points="50,5 91,27.5 91,72.5 50,95 9,72.5 9,27.5" stroke="#FFBE00" stroke-width="2.5" fill="rgba(255,190,0,.05)"/>
+            <line x1="32" y1="36" x2="68" y2="36" stroke="#FFBE00" stroke-width="4" stroke-linecap="round"/>
+            <line x1="50" y1="36" x2="50" y2="66" stroke="#FFBE00" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <div style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:900; color:var(--gold); line-height:1;">Téranga</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--terra); letter-spacing:.2em;">OS</div>
+          </div>
+        </div>
+        <div class="logo-card-label">Wordmark horizontal</div>
+      </div>
+
+      <!-- Variant 3: Monochrome -->
+      <div class="logo-card reveal" style="background:#F5EDD8;">
+        <svg width="70" height="70" viewBox="0 0 100 100" fill="none">
+          <polygon points="50,5 91,27.5 91,72.5 50,95 9,72.5 9,27.5" stroke="#0a0702" stroke-width="2.5" fill="rgba(10,7,2,.06)"/>
+          <polygon points="50,18 78,34 78,66 50,82 22,66 22,34" stroke="#0a0702" stroke-width="1" fill="none" stroke-dasharray="3 2"/>
+          <line x1="35" y1="38" x2="65" y2="38" stroke="#0a0702" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="50" y1="38" x2="50" y2="65" stroke="#0a0702" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+        <div class="logo-card-label" style="color:rgba(10,7,2,.4);">Monochrome / fond clair</div>
+      </div>
+
+      <!-- Variant 4: Icon only small -->
+      <div class="logo-card reveal">
+        <div style="display:flex; gap:.8rem; align-items:center;">
+          <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
+            <polygon points="50,5 91,27.5 91,72.5 50,95 9,72.5 9,27.5" stroke="#FFBE00" stroke-width="3" fill="rgba(255,190,0,.08)"/>
+            <line x1="32" y1="36" x2="68" y2="36" stroke="#FFBE00" stroke-width="5" stroke-linecap="round"/>
+            <line x1="50" y1="36" x2="50" y2="66" stroke="#FFBE00" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
+            <polygon points="50,5 91,27.5 91,72.5 50,95 9,72.5 9,27.5" stroke="#FFBE00" stroke-width="3" fill="rgba(255,190,0,.08)"/>
+            <line x1="32" y1="36" x2="68" y2="36" stroke="#FFBE00" stroke-width="5" stroke-linecap="round"/>
+            <line x1="50" y1="36" x2="50" y2="66" stroke="#FFBE00" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+            <polygon points="50,5 91,27.5 91,72.5 50,95 9,72.5 9,27.5" stroke="#FFBE00" stroke-width="3" fill="rgba(255,190,0,.08)"/>
+            <line x1="32" y1="36" x2="68" y2="36" stroke="#FFBE00" stroke-width="5" stroke-linecap="round"/>
+            <line x1="50" y1="36" x2="50" y2="66" stroke="#FFBE00" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="logo-card-label">Icône — 32 / 48 / 64 px</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- PALETTE -->
+<section id="palette">
+  <div class="container">
+    <p class="sec-label reveal">Identité — Couleurs</p>
+    <h2 class="sec-title reveal">Palette <span>officielle</span></h2>
+
+    <div class="palette-grid">
+      <div class="color-chip reveal">
+        <div class="chip-block" style="background:#FFBE00;"></div>
+        <div class="chip-info">
+          <div class="chip-name">Or Djolof</div>
+          <div class="chip-hex">#FFBE00</div>
+          <div class="chip-role">Couleur principale · Brand</div>
+        </div>
+      </div>
+      <div class="color-chip reveal">
+        <div class="chip-block" style="background:#C85200;"></div>
+        <div class="chip-info">
+          <div class="chip-name">Terre de Dakar</div>
+          <div class="chip-hex">#C85200</div>
+          <div class="chip-role">Accent secondaire · Danger</div>
+        </div>
+      </div>
+      <div class="color-chip reveal">
+        <div class="chip-block" style="background:#FF7A30;"></div>
+        <div class="chip-info">
+          <div class="chip-name">Harmattan</div>
+          <div class="chip-hex">#FF7A30</div>
+          <div class="chip-role">Hover · Warning · Avertissement</div>
+        </div>
+      </div>
+      <div class="color-chip reveal">
+        <div class="chip-block" style="background:#0A0702;"></div>
+        <div class="chip-info">
+          <div class="chip-name">Nuit de Gorée</div>
+          <div class="chip-hex">#0A0702</div>
+          <div class="chip-role">Background principal</div>
+        </div>
+      </div>
+      <div class="color-chip reveal">
+        <div class="chip-block" style="background:#1A1408;"></div>
+        <div class="chip-info">
+          <div class="chip-name">Braise</div>
+          <div class="chip-hex">#1A1408</div>
+          <div class="chip-role">Surface · Cards · Panels</div>
+        </div>
+      </div>
+      <div class="color-chip reveal">
+        <div class="chip-block" style="background:#F5EDD8; border-top:1px solid rgba(0,0,0,.1);"></div>
+        <div class="chip-info">
+          <div class="chip-name">Sable du Sahel</div>
+          <div class="chip-hex">#F5EDD8</div>
+          <div class="chip-role">Texte principal · Foreground</div>
+        </div>
+      </div>
+      <div class="color-chip reveal">
+        <div class="chip-block" style="background:#4FFFAA;"></div>
+        <div class="chip-info">
+          <div class="chip-name">Mangrove</div>
+          <div class="chip-hex">#4FFFAA</div>
+          <div class="chip-role">Succès · OK · Confirmé</div>
+        </div>
+      </div>
+      <div class="color-chip reveal">
+        <div class="chip-block" style="background:#7EC8FF;"></div>
+        <div class="chip-info">
+          <div class="chip-name">Atlantique</div>
+          <div class="chip-hex">#7EC8FF</div>
+          <div class="chip-role">Info · IA · Liens</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- TYPO -->
+<section id="typo">
+  <div class="container">
+    <p class="sec-label reveal">Identité — Typographie</p>
+    <h2 class="sec-title reveal">Système <span>typographique</span></h2>
+
+    <div class="typo-showcase">
+      <div class="typo-row reveal">
+        <div class="typo-sample">
+          <div style="font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:900; color:var(--gold); line-height:1;">TérangaOS</div>
+          <div style="font-family:'Playfair Display',serif; font-size:1.2rem; font-style:italic; color:var(--muted); margin-top:.3rem;">Dalal ak diam</div>
+        </div>
+        <div class="typo-meta">
+          <div class="typo-meta-name">Playfair Display</div>
+          <div class="typo-meta-info">Display · Titres<br>Black 900 / Bold Italic<br>Serif de prestige</div>
+        </div>
+      </div>
+      <div class="typo-row reveal">
+        <div class="typo-sample">
+          <div style="font-family:'Syne',sans-serif; font-size:1rem; font-weight:600; color:var(--cream);">Distribution GNU/Linux spécialisée en cybersécurité, développement et intelligence artificielle.</div>
+          <div style="font-family:'Syne',sans-serif; font-size:.85rem; color:var(--muted); margin-top:.5rem; font-weight:400; line-height:1.6;">Conçue à l'ESP/UCAD de Dakar, TérangaOS réunit dans un seul environnement tous les outils nécessaires aux professionnels du numérique africain.</div>
+        </div>
+        <div class="typo-meta">
+          <div class="typo-meta-name">Syne</div>
+          <div class="typo-meta-info">Corps · UI Labels<br>SemiBold 600 / Regular 400<br>Sans-serif géométrique</div>
+        </div>
+      </div>
+      <div class="typo-row reveal">
+        <div class="typo-sample">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:.85rem; color:#4FFFAA;">$ sudo apt install teranga-cybersuite</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--muted); margin-top:.4rem; line-height:1.9;">
+            [  OK  ] Loaded TérangaOS kernel 6.8.0<br>
+            [ INFO ] Starting Ollama AI runtime...<br>
+            [ TERA ] Welcome. Your OS is ready.
+          </div>
+        </div>
+        <div class="typo-meta">
+          <div class="typo-meta-name">JetBrains Mono</div>
+          <div class="typo-meta-info">Code · Terminal<br>Regular 400 / Light 300<br>Monospace technique</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- TOOLSET -->
+<section id="toolset">
+  <div class="container">
+    <p class="sec-label reveal">Architecture — Outils</p>
+    <h2 class="sec-title reveal">Les trois <span>piliers</span></h2>
+    <p class="reveal" style="font-size:.82rem; color:var(--muted); max-width:540px; line-height:1.7; margin-bottom:0;">
+      Base : <strong style="color:var(--gold);">Debian 12 "Bookworm"</strong> · Desktop : <strong style="color:var(--gold);">KDE Plasma 6</strong> · Kernel : <strong style="color:var(--gold);">6.8 LTS</strong>
+    </p>
+
+    <div class="pillars-grid" style="margin-top:2rem;">
+
+      <!-- PILLAR 1: CYBERSEC -->
+      <div class="pillar-card reveal">
+        <div class="pillar-header">
+          <div class="pillar-icon">🔒</div>
+          <div>
+            <div class="pillar-title">Cybersécurité</div>
+            <div class="pillar-sub">// Pentest · Forensics · CTF</div>
+          </div>
+        </div>
+        <div class="pillar-tools">
+          <div class="tool-row"><span class="tool-name">nmap</span><span class="tool-desc">Scan réseau</span><span class="tool-tag tag-sec">pentest</span></div>
+          <div class="tool-row"><span class="tool-name">Metasploit</span><span class="tool-desc">Framework exploit</span><span class="tool-tag tag-sec">exploit</span></div>
+          <div class="tool-row"><span class="tool-name">Wireshark</span><span class="tool-desc">Analyse paquets</span><span class="tool-tag tag-sec">forensics</span></div>
+          <div class="tool-row"><span class="tool-name">Burp Suite CE</span><span class="tool-desc">Proxy web</span><span class="tool-tag tag-sec">web</span></div>
+          <div class="tool-row"><span class="tool-name">John / Hashcat</span><span class="tool-desc">Cracking</span><span class="tool-tag tag-sec">crypto</span></div>
+          <div class="tool-row"><span class="tool-name">Aircrack-ng</span><span class="tool-desc">Audit Wi-Fi</span><span class="tool-tag tag-sec">wireless</span></div>
+          <div class="tool-row"><span class="tool-name">Volatility 3</span><span class="tool-desc">Forensics mémoire</span><span class="tool-tag tag-sec">forensics</span></div>
+          <div class="tool-row"><span class="tool-name">CyberChef</span><span class="tool-desc">Encodage / décodage</span><span class="tool-tag tag-sec">ctf</span></div>
+        </div>
+      </div>
+
+      <!-- PILLAR 2: DEV -->
+      <div class="pillar-card reveal">
+        <div class="pillar-header">
+          <div class="pillar-icon">⚡</div>
+          <div>
+            <div class="pillar-title">Développement</div>
+            <div class="pillar-sub">// Full-Stack · DevOps · CLI</div>
+          </div>
+        </div>
+        <div class="pillar-tools">
+          <div class="tool-row"><span class="tool-name">VS Code</span><span class="tool-desc">Éditeur principal</span><span class="tool-tag tag-dev">ide</span></div>
+          <div class="tool-row"><span class="tool-name">Python 3.12</span><span class="tool-desc">Scripting & IA</span><span class="tool-tag tag-dev">lang</span></div>
+          <div class="tool-row"><span class="tool-name">Node.js / npm</span><span class="tool-desc">Runtime JS</span><span class="tool-tag tag-dev">runtime</span></div>
+          <div class="tool-row"><span class="tool-name">Rust toolchain</span><span class="tool-desc">Systèmes / perf</span><span class="tool-tag tag-dev">lang</span></div>
+          <div class="tool-row"><span class="tool-name">Docker</span><span class="tool-desc">Conteneurs</span><span class="tool-tag tag-dev">devops</span></div>
+          <div class="tool-row"><span class="tool-name">Git + GitHub CLI</span><span class="tool-desc">Versioning</span><span class="tool-tag tag-dev">vcs</span></div>
+          <div class="tool-row"><span class="tool-name">Oh My Zsh</span><span class="tool-desc">Shell enrichi</span><span class="tool-tag tag-dev">shell</span></div>
+          <div class="tool-row"><span class="tool-name">Postman</span><span class="tool-desc">Tests API</span><span class="tool-tag tag-dev">api</span></div>
+        </div>
+      </div>
+
+      <!-- PILLAR 3: AI -->
+      <div class="pillar-card reveal">
+        <div class="pillar-header">
+          <div class="pillar-icon">🤖</div>
+          <div>
+            <div class="pillar-title">Intelligence Artificielle</div>
+            <div class="pillar-sub">// LLM · ML · Local AI</div>
+          </div>
+        </div>
+        <div class="pillar-tools">
+          <div class="tool-row"><span class="tool-name">Ollama</span><span class="tool-desc">LLM local (Llama 3, Mistral)</span><span class="tool-tag tag-ai">llm</span></div>
+          <div class="tool-row"><span class="tool-name">Open WebUI</span><span class="tool-desc">Interface chat IA</span><span class="tool-tag tag-ai">ui</span></div>
+          <div class="tool-row"><span class="tool-name">Jupyter Lab</span><span class="tool-desc">Notebooks interactifs</span><span class="tool-tag tag-ai">notebook</span></div>
+          <div class="tool-row"><span class="tool-name">PyTorch</span><span class="tool-desc">Framework deep learning</span><span class="tool-tag tag-ai">ml</span></div>
+          <div class="tool-row"><span class="tool-name">Scikit-learn</span><span class="tool-desc">ML classique</span><span class="tool-tag tag-ai">ml</span></div>
+          <div class="tool-row"><span class="tool-name">LangChain</span><span class="tool-desc">Pipelines LLM</span><span class="tool-tag tag-ai">llm</span></div>
+          <div class="tool-row"><span class="tool-name">Stable Diffusion</span><span class="tool-desc">Génération d'images</span><span class="tool-tag tag-ai">gen-ai</span></div>
+          <div class="tool-row"><span class="tool-name">Whisper (OpenAI)</span><span class="tool-desc">Speech to text</span><span class="tool-tag tag-ai">audio</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="container">
+    <p class="sec-label reveal">Plan de travail</p>
+    <h2 class="sec-title reveal">Roadmap de <span>construction</span></h2>
+
+    <div class="roadmap">
+      <div class="roadmap-line"></div>
+
+      <div class="phase reveal">
+        <div class="phase-dot">01</div>
+        <div class="phase-body">
+          <div class="phase-title">Environnement de build</div>
+          <div class="phase-desc">Installer les outils de build sur une machine Debian. Configurer <code style="color:var(--gold)">live-build</code> (outil officiel Debian pour créer des ISO live). Préparer la structure du projet Git.</div>
+          <div class="phase-tech">
+            <span class="phase-chip">live-build</span>
+            <span class="phase-chip">debootstrap</span>
+            <span class="phase-chip">git init</span>
+            <span class="phase-chip">Debian 12 Bookworm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase reveal">
+        <div class="phase-dot">02</div>
+        <div class="phase-body">
+          <div class="phase-title">Configuration de la base</div>
+          <div class="phase-desc">Définir les paramètres de l'ISO : architecture (amd64), langue (fr_FR), locale, fuseau horaire (Africa/Dakar), hostname <code style="color:var(--gold)">terangaos</code>. Configurer le dépôt APT.</div>
+          <div class="phase-tech">
+            <span class="phase-chip">lb config</span>
+            <span class="phase-chip">locale fr_FR.UTF-8</span>
+            <span class="phase-chip">Africa/Dakar</span>
+            <span class="phase-chip">KDE Plasma 6</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase reveal">
+        <div class="phase-dot">03</div>
+        <div class="phase-body">
+          <div class="phase-title">Package lists — Les 3 piliers</div>
+          <div class="phase-desc">Créer les fichiers de liste de paquets pour chaque pilier. Ajouter les scripts post-install pour Ollama, Open WebUI, Metasploit (pas dans APT officiel).</div>
+          <div class="phase-tech">
+            <span class="phase-chip">package-lists/</span>
+            <span class="phase-chip">hooks/</span>
+            <span class="phase-chip">curl | sh (Ollama)</span>
+            <span class="phase-chip">msfinstall</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase reveal">
+        <div class="phase-dot">04</div>
+        <div class="phase-body">
+          <div class="phase-title">Theming & Branding KDE</div>
+          <div class="phase-desc">Appliquer la palette TérangaOS sur KDE Plasma : fond d'écran personnalisé, thème Kvantum, icônes Papirus (orange), GRUB themé, splash screen Plymouth.</div>
+          <div class="phase-tech">
+            <span class="phase-chip">Kvantum</span>
+            <span class="phase-chip">Papirus-icon-theme</span>
+            <span class="phase-chip">Plymouth</span>
+            <span class="phase-chip">GRUB theme</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase reveal">
+        <div class="phase-dot">05</div>
+        <div class="phase-body">
+          <div class="phase-title">Build & Test en VM</div>
+          <div class="phase-desc">Lancer <code style="color:var(--gold)">lb build</code> pour générer l'ISO. Tester dans VirtualBox ou QEMU. Corriger les erreurs de build itérativement. Vérifier le boot UEFI + BIOS.</div>
+          <div class="phase-tech">
+            <span class="phase-chip">lb build</span>
+            <span class="phase-chip">VirtualBox / QEMU</span>
+            <span class="phase-chip">UEFI + Legacy BIOS</span>
+            <span class="phase-chip">live-boot</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase reveal">
+        <div class="phase-dot">06</div>
+        <div class="phase-body">
+          <div class="phase-title">Packaging final & Livraison</div>
+          <div class="phase-desc">Générer l'ISO finale (~4-6 Go). Calculer le SHA256. Rédiger la documentation utilisateur en français. Préparer la soutenance avec démo live.</div>
+          <div class="phase-tech">
+            <span class="phase-chip">terangaos-1.0-amd64.iso</span>
+            <span class="phase-chip">sha256sum</span>
+            <span class="phase-chip">README.md</span>
+            <span class="phase-chip">Démo live ESP/UCAD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- MOCKUPS -->
+<section id="mockups">
+  <div class="container">
+    <p class="sec-label reveal">Aperçu — Interface</p>
+    <h2 class="sec-title reveal">TérangaOS <span>en action</span></h2>
+
+    <div class="mockup-row">
+
+      <!-- GRUB -->
+      <div class="grub-mock reveal">
+        <div class="grub-header">
+          <div class="grub-title">TérangaOS</div>
+          <div class="grub-sub">GNU GRUB 2.12 · Appuyez sur ↑↓ pour naviguer</div>
+        </div>
+        <div class="grub-entries">
+          <div class="grub-entry active">* TérangaOS 1.0 GNU/Linux (Codename: Djolof)</div>
+          <div class="grub-entry">  TérangaOS 1.0 — Mode Forensics (lecture seule)</div>
+          <div class="grub-entry">  TérangaOS 1.0 — Recovery Mode</div>
+          <div class="grub-entry">  UEFI Firmware Settings</div>
+        </div>
+        <div class="grub-footer">
+          <span>Use ↑↓ keys · ENTER to boot</span>
+          <span style="color:var(--gold);">TérangaOS Project · ESP/UCAD Dakar</span>
+        </div>
+      </div>
+
+      <!-- BOOT TERMINAL -->
+      <div class="boot-screen reveal">
+        <div style="color:var(--gold); font-size:.8rem; font-weight:600; margin-bottom:.8rem;">
+          ████████╗███████╗██████╗  █████╗ ███╗  ██╗ ██████╗  █████╗
+        </div>
+        <div class="b-muted" style="font-size:.55rem; margin-bottom:1rem;">TérangaOS v1.0 — Codename "Djolof" — ESP/UCAD Dakar, Sénégal</div>
+        <div style="display:flex; gap:.6rem;"><span class="b-ok">[  OK  ]</span><span>Loaded TérangaOS kernel 6.8.0-teranga (amd64)</span></div>
+        <div style="display:flex; gap:.6rem;"><span class="b-ok">[  OK  ]</span><span>Started Journald logging service</span></div>
+        <div style="display:flex; gap:.6rem;"><span class="b-ok">[  OK  ]</span><span>Mounted /home (ext4, rw)</span></div>
+        <div style="display:flex; gap:.6rem;"><span class="b-info">[ INFO ]</span><span>Loading CyberSuite — 47 tools available</span></div>
+        <div style="display:flex; gap:.6rem;"><span class="b-info">[ INFO ]</span><span>Starting Ollama AI runtime (Llama 3.1 8B)...</span></div>
+        <div style="display:flex; gap:.6rem;"><span class="b-ok">[  OK  ]</span><span>Ollama daemon started on 127.0.0.1:11434</span></div>
+        <div style="display:flex; gap:.6rem;"><span class="b-ok">[  OK  ]</span><span>Docker service started</span></div>
+        <div style="display:flex; gap:.6rem;"><span class="b-ok">[  OK  ]</span><span>KDE Plasma 6 session ready</span></div>
+        <div style="display:flex; gap:.6rem; margin-top:.5rem;"><span class="b-gold">[ TERA ]</span><span style="color:var(--gold); font-weight:600;">Dalal ak diam — TérangaOS est prêt. 🌍</span></div>
+      </div>
+
+      <!-- DESKTOP -->
+      <div class="desktop-mock reveal">
+        <div class="desktop-topbar">
+          <span style="display:flex; align-items:center; gap:.5rem;">
+            <span style="font-family:'Playfair Display',serif; color:var(--gold); font-weight:900;">Téranga</span>
+            <span>Applications</span> <span>Lieux</span>
+          </span>
+          <span>Jeu. 10 Avr 2026 · 10:42</span>
+          <span>🔒 ⚡ 🤖 · 🔋98%</span>
+        </div>
+        <div class="desktop-wallpaper">
+          <div class="wp-logo">TérangaOS</div>
+          <div class="wp-ver">v1.0 · Codename "Djolof"</div>
+        </div>
+        <div class="desktop-dock">
+          <div class="dock-icon" title="Terminal">⌨</div>
+          <div class="dock-icon" title="VS Code">📝</div>
+          <div class="dock-icon" title="Navigateur">🌐</div>
+          <div class="dock-icon" title="Wireshark">📡</div>
+          <div class="dock-icon" title="Metasploit">🎯</div>
+          <div class="dock-icon" title="Ollama / IA">🤖</div>
+          <div class="dock-icon" title="Jupyter">📓</div>
+          <div class="dock-icon" title="Docker">🐳</div>
+          <div class="dock-icon" title="Burp Suite">🔍</div>
+          <div class="dock-icon" title="Paramètres">⚙</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- FOOTER -->
+<footer style="padding:3rem 2rem; text-align:center; max-width:1200px; margin:0 auto;">
+  <div style="font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:900; color:var(--gold); margin-bottom:.5rem;">TérangaOS</div>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:.6rem; color:var(--muted); letter-spacing:.2em; margin-bottom:2rem;">GNU/Linux · Cybersecurity · Development · AI · ESP/UCAD Dakar</div>
+  <div style="display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; font-family:'JetBrains Mono',monospace; font-size:.6rem; color:rgba(245,237,216,.2);">
+    <span>Base : Debian 12 Bookworm</span>
+    <span>Desktop : KDE Plasma 6</span>
+    <span>Kernel : 6.8 LTS</span>
+    <span>Codename : Djolof</span>
+    <span>Arch : amd64</span>
+  </div>
+</footer>
+
+<script>
+// Cursor
+const cur = document.getElementById('cur');
+const ring = document.getElementById('ring');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+  setTimeout(() => {
+    ring.style.left = e.clientX + 'px';
+    ring.style.top  = e.clientY + 'px';
+  }, 60);
+});
+
+// Reveal on scroll
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 60);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
